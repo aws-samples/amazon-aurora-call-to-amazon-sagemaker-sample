@@ -1,6 +1,6 @@
 # Amazon Aurora and Amazon ML Services Sample
 
-This is sample demonstrates a tool that helps organizations to easily access ML services deployed on Amazon SageMaker or Amazon Comprehend. In this sample we use multiple sources such as customer care, order system, financial systems to train, deploy a model and use it to predict business outcomes. Each source may need a different algorithm, e.g. linear regression for classified data, anomaly detection for unclassified data and we’d want to reconcile them. Gaming is an example of multiple data sources.
+tThis is sample demonstrates a tool that helps organizations to easily access ML services deployed on Amazon SageMaker or Amazon Comprehend. In this sample we use multiple sources such as customer care, order system, financial systems to train, deploy a model and use it to predict business outcomes. Each source may need a different algorithm, e.g. linear regression for classified data, anomaly detection for unclassified data and we’d want to reconcile them. Gaming is an example of multiple data sources.
 
 ## The cheating problem in gaming
 The game industry generated an estimated $174B worldwide in 2019 (IDC). Player churn grows as cheating grows 60% of online games were negatively impacted by cheaters. 77% of players would stop playing a multiplayer game if they thought opponents were cheating (Irdeto). Similar issues may exist in other industries. 
