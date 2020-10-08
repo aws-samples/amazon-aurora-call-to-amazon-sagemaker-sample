@@ -12,3 +12,7 @@ create table if not exists actions (
   primary key (id)
 );
 select 'actions' as '';
+
+create table debug_log_auth (id MEDIUMINT NOT NULL AUTO_INCREMENT, log varchar(64) not null, primary key (id));
+
+select 'debug_log_auth' as '';
