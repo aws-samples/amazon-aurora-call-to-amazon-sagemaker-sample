@@ -16,6 +16,9 @@ os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 client = boto3.client('rds')
 
 s3_resource = boto3.resource('s3')
+print('endpoint={},port={},user={},password={},region={},dbname={}'.format(ENDPOINT,PORT,USR,PASWD,REGION,DBNAME))
+conn =  mysql.connector.connect(host=ENDPOINT, user=USR, passwd=PASWD, port=PORT, database=DBNAME)
+print('after connecting to rds')
 
 def lambda_handler(event, context):
     for record in event['Records']:
@@ -26,6 +29,7 @@ def lambda_handler(event, context):
         s3_object = s3_resource.Object(bucket, key)
         data = s3_object.get()['Body'].read().decode('utf-8').splitlines()
         lines = csv.reader(data,delimiter=' ')
+        print('after s3 read')
         values=''
         for line in lines:
             m_ticks=line[0]
@@ -39,21 +43,21 @@ def lambda_handler(event, context):
               values=values+','+value
             else:
               values=value
- 
+        print('values='+str(values)) 
         insert_stmt=(
           "INSERT INTO actions (m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r)" 
           "VALUES"+values 
         )
     try:
-        conn =  mysql.connector.connect(host=ENDPOINT, user=USR, passwd=PASWD, port=PORT, database=DBNAME)
         cur = conn.cursor()
-        #cur.execute("""SELECT now()""")
-        print(insert_stmt)
         cur.execute(insert_stmt)
         conn.commit()
-    except Exception as e:
+        print('insert_stmt in try='+insert_stmt)
+    except mysql.connector.Error as e:
         print("Database connection failed due to {}".format(e)) 
-        conn.rollback()
+        conn.reset_session()
+    print("about the return")
+    #conn.close()
     return {
         'statusCode': 200,
         'body': json.dumps('bulk insert to stk')
