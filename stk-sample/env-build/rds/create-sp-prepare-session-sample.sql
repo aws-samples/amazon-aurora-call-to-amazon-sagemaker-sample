@@ -30,6 +30,7 @@ BEGIN
          LEAVE getSample;
        END IF;
        truncate table vertical_session; 
+       truncate table session_sample;
 
        WHILE _count < 126 DO 
          insert into vertical_session values(_count,split_string(sample,',',_count),'session');
