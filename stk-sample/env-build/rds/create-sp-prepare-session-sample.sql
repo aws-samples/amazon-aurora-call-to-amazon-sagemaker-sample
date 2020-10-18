@@ -7,6 +7,7 @@ BEGIN
   DECLARE finished INTEGER DEFAULT 0;
   DECLARE _count INT DEFAULT 1;
   DECLARE i INTEGER DEFAULT 0;
+  
 
   DECLARE _cursor 
           CURSOR FOR	
@@ -22,6 +23,8 @@ BEGIN
   FOR NOT FOUND SET finished=1;
 
   insert into debug_log (log) values('executed sample');
+  insert into debug_log (log) values('rand sample');
+  insert into debug_log (log) values(rand);
   OPEN _cursor;
 
   getSample: LOOP

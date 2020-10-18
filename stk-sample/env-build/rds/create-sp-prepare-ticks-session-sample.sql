@@ -9,15 +9,11 @@ BEGIN
   DECLARE i INTEGER DEFAULT 0;
 
   DECLARE _cursor 
-          CURSOR FOR	
-             select group_concat(concat(m_ticks)) as sample
-                from (
-                        select concat(id,"-",m_kart_id) id, m_ticks
-                        from (
-                                select id,m_kart_id,m_ticks
-                                from (
-                                        select id,m_kart_id,m_ticks
-                                        from actions order by id desc limit 70) t1 order by m_kart_id limit 10) t2) t3; 
+          CURSOR FOR
+--TODO - wrong session aggregation -	
+            select group_concat(concat(m_ticks)) as sample from (select concat(id,"-",m_kart_id) id, m_ticks from (select * from (select * from (select m_kart_id,m_ticks from actions where class is null order by id desc limit 50) t1 order by m_kart_id limit 10) t2 order by m_ticks) t3) t4;
+--                                        where id < (select FLOOR(0 + (RAND() * 1000)))
+--                                        and id > (select FLOOR(0 + (RAND() * 10000)))
 
   DECLARE CONTINUE HANDLER
   FOR NOT FOUND SET finished=1;
@@ -31,7 +27,6 @@ BEGIN
          LEAVE getSample;
        END IF;
        truncate table vertical_session; 
-       truncate table ticks_session_sample;
 
        WHILE _count < 11 DO 
          insert into vertical_session values(_count,split_string(sample,',',_count),'session');

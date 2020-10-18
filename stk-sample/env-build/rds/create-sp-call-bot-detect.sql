@@ -9,12 +9,36 @@ BEGIN
  SELECT class;
 END $$
 
-DROP PROCEDURE IF EXISTS is_bot_ticks_detector;
-CREATE PROCEDURE is_bot_ticks_detector()
+DELIMITER $$
+DROP PROCEDURE IF EXISTS bot_ticks_detector;
+CREATE PROCEDURE bot_ticks_detector()
 BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
   DECLARE class double;
-  select bot_detect_ticks_score(ticks_1,ticks_2,ticks_3,ticks_4,ticks_5,ticks_6,ticks_7,ticks_8,ticks_9,ticks_10) score from ticks_session_sample into class;
- insert into debug_log(log) values (CONCAT('call_bot_ticks_detector-class=',class));
- SELECT class;
+  DECLARE sample varchar(256);
+  DECLARE _id INTEGER default 0;
+
+  DECLARE _cursor
+    CURSOR FOR
+      select id from ticks_session_sample;
+  DECLARE CONTINUE HANDLER
+  FOR NOT FOUND SET finished=1;
+
+  OPEN _cursor;
+
+  getId: LOOP
+    FETCH _cursor INTO _id;
+    IF finished =1 THEN
+      LEAVE getId;
+    END IF;
+      select bot_detect_ticks_score(ticks_1,ticks_2,ticks_3,ticks_4,ticks_5,ticks_6,ticks_7,ticks_8,ticks_9,ticks_10) score from ticks_session_sample where id=_id into class;
+      select CONCAT(ticks_1,',',ticks_2,',',ticks_3,',',ticks_4,',',ticks_5,',',ticks_6,',',ticks_7,',',ticks_8,',',ticks_9,',',ticks_10) from ticks_session_sample where id=_id into sample;
+      update ticks_session_sample set prediction=class where id=_id and prediction is null; 
+      insert into debug_log(log) values (CONCAT('call_bot_ticks_detector-class=',class));
+      insert into debug_log(log) values (CONCAT('call_bot_ticks_detector-sample=',sample));
+      insert into debug_log(log) values (CONCAT('call_bot_ticks_detector-id=',_id));
+    END LOOP getId;
+    CLOSE _cursor;
 END $$
+
 DELIMITER ;

@@ -14,7 +14,7 @@ RETURNS double
 DROP FUNCTION IF EXISTS bot_detect_ticks_score;
 CREATE FUNCTION bot_detect_ticks_score (
   ticks_1 int(11),ticks_2 int(11),ticks_3 int(11),ticks_4 int(11),ticks_5 int(11),ticks_6 int(11),ticks_7 int(11),ticks_8 int(11),ticks_9 int(11),ticks_10 int(11))
-RETURNS double
+RETURNS varchar(256)
        alias aws_sagemaker_invoke_endpoint
        endpoint name 'stk-bot-detect-ticks'
 ;
