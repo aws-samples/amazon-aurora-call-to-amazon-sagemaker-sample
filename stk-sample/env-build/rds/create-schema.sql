@@ -9,6 +9,7 @@ create table if not exists actions (
   m_value DOUBLE,
   m_value_l DOUBLE,
   m_value_r DOUBLE,
+  class DOUBLE,
   primary key (id)
 );
 select 'actions' as '';
