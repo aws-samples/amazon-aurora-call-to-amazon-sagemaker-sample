@@ -53,9 +53,9 @@ def lambda_handler(event, context):
         cur.execute(insert_stmt)
         conn.commit()
         print('insert_stmt in try='+insert_stmt)
-    except mysql.connector.Error as e:
-        print("Database connection failed due to {}".format(e)) 
-        conn.reset_session()
+    except Exception as e:
+        print("Database exception due to {}".format(e)) 
+        #conn.reset_session()
     print("about the return")
     #conn.close()
     return {
