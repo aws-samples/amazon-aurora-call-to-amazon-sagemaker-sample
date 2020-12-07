@@ -55,9 +55,7 @@ def lambda_handler(event, context):
         print('insert_stmt in try='+insert_stmt)
     except Exception as e:
         print("Database connection failed due to {}".format(e)) 
-        conn.reset_session()
     print("about the return")
-    #conn.close()
     return {
         'statusCode': 200,
         'body': json.dumps('bulk insert to stk')
