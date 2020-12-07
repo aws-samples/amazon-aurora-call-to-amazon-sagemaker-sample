@@ -42,7 +42,6 @@ select curr.id,curr.m_kart_id,curr.c_t,curr.p_t,curr.vel c_v,prev.vel p_v
 
 select 'v_actions_ticks_accel' as '';
 
-
 create or replace view v_actions_m_value_velocity as
 select id,m_action,m_kart_id,c_v,p_v,(c_v-p_v) vel,c_v_l,p_v_l,(c_v_l-p_v_l) vel_l,c_v_r,p_v_r,(c_v_r-p_v_r) vel_r,party_size,session,class
 from
