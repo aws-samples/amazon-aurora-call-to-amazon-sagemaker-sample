@@ -10,8 +10,7 @@ BEGIN
 
   DECLARE _cursor 
           CURSOR FOR
---TODO - wrong session aggregation -	
-            select group_concat(concat(m_ticks)) as sample from (select concat(id,"-",m_kart_id) id, m_ticks from (select * from (select * from (select m_kart_id,m_ticks from actions where class is null order by id desc limit 50) t1 order by m_kart_id limit 10) t2 order by m_ticks) t3) t4;
+            select group_concat(concat(m_ticks)) as sample from (select concat(id,"-",m_kart_id) id, m_ticks from (select * from (select id,m_kart_id,m_ticks from actions where class is null order by m_kart_id desc limit 50) t1 order by id limit 10) t2) t3;
 --                                        where id < (select FLOOR(0 + (RAND() * 1000)))
 --                                        and id > (select FLOOR(0 + (RAND() * 10000)))
 
