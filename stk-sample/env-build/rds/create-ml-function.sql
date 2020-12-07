@@ -18,3 +18,12 @@ RETURNS varchar(256)
        alias aws_sagemaker_invoke_endpoint
        endpoint name 'stk-bot-detect-ticks'
 ;
+
+DROP FUNCTION IF EXISTS bot_detect_actions_score;
+CREATE FUNCTION bot_detect_actions_score (
+ value int,velocity int,accel int, value_l int,velocity_l int,accel_l int,value_r int,velocity_r int,accel_r int,m_action_0 int,m_action_1 int,m_action_2 int,m_action_3 int,m_action_4 int,m_action_5 int,m_action_6 int
+ )
+RETURNS varchar(256)
+       alias aws_sagemaker_invoke_endpoint
+       endpoint name 'stk-bot-detect-actions'
+;
