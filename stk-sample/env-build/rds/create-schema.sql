@@ -2,14 +2,15 @@ CREATE DATABASE IF NOT EXISTS stk;
 use stk;
 
 create table if not exists actions (
-  id MEDIUMINT NOT NULL AUTO_INCREMENT,
-  m_ticks DOUBLE,
-  m_kart_id DOUBLE,
-  m_action DOUBLE,
-  m_value DOUBLE,
-  m_value_l DOUBLE,
-  m_value_r DOUBLE,
-  class DOUBLE,
+  id int NOT NULL AUTO_INCREMENT,
+  p_guid int,
+  m_ticks int,
+  m_kart_id int,
+  m_action int,
+  m_value int,
+  m_value_l int,
+  m_value_r int,
+  class int,
   primary key (id)
 );
 select 'actions' as '';
