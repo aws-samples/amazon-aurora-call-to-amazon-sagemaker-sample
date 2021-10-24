@@ -44,7 +44,7 @@ data:
     [INPUT]
         Name              tail
         Tag               kube.*
-        Path              /var/log/containers/stk-fleet*.log
+        Path              /var/log/containers/stk*.log
         DB                /var/log/flb_kube.db
         Mem_Buf_Limit     50MB
         Skip_Long_Lines   On
