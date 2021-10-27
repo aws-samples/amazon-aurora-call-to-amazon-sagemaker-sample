@@ -68,9 +68,6 @@ eksctl create addon \
 
 eksctl get addon --name vpc-cni --cluster stk-us-west-2
 ```
-```
-
-
 
 ### Create ECR to host the image
 make sure the base image exists and availible. If not deploy the base image. see build-from-scratch-and-deploy-base-image.md
