@@ -1,4 +1,4 @@
-### Deploy EKS Cluster to host the gaem server
+### Deploy EKS Cluster to host the game server
 `eks/stk/eks-cluster-spec.yaml`
 
 ### Deploy AWS Load Balancer Controller
