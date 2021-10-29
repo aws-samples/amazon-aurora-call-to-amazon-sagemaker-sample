@@ -42,7 +42,7 @@ spec:
         image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:0.1
         imagePullPolicy: Always
         name: stk
-        command: ["/home/supertuxkart/stk-code/start-server.sh"]
+        command: ["/stk-code/start-server.sh"]
         ports:
           - name: tcp
             containerPort: 80
