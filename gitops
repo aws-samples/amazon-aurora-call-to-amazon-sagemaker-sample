@@ -1,7 +1,6 @@
 #!/bin/bash
 cd .
 pwd
-git fetch
 branch_name="b_"$RANDOM
 git checkout -b $branch_name
 git add *

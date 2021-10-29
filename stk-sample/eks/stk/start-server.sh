@@ -14,4 +14,10 @@ then
   GAME_MODE=0
 fi
 service nginx start
-./cmake_build/bin/supertuxkart --server-config=/home/supertuxkart/stk-code/server_config.xml --log=0 --connection-debug --mode=${GAME_MODE} 
+cd /stk-code
+./cmake_build/bin/supertuxkart --server-config=/stk-code/server_config.xml --log=0 --connection-debug --mode=${GAME_MODE} 
+
+while true
+do
+sleep 1000
+done
