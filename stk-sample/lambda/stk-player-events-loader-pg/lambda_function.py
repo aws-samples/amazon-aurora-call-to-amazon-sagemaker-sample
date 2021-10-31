@@ -1,7 +1,9 @@
 import json
+import base64
+import re
 import boto3
 import csv
-import psycopg2
+import pg8000
 import sys
 import os
 
@@ -16,9 +18,14 @@ os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 client = boto3.client('rds')
 
 s3_resource = boto3.resource('s3')
-print('endpoint={},port={},user={},password={},region={},dbname={}'.format(ENDPOINT,PORT,USR,PASWD,REGION,DBNAME))
+#print('endpoint={},port={},user={},password={},region={},dbname={}'.format(ENDPOINT,PORT,USR,PASWD,REGION,DBNAME))
 try:
-  conn =  psycopg2.connect(host=ENDPOINT, user=USR, passwd=PASWD, port=PORT, database=DBNAME)
+  conn=pg8000.connect(
+        DBNAME,
+        host = ENDPOINT,
+        password = PASWD
+  )
+  conn.autocommit=True
   print('after connecting to rds')
 except Exception as e:
   print("ERROR: Could not connect to Postgres instance:"+ENDPOINT)
@@ -32,31 +39,40 @@ def lambda_handler(event, context):
         print('key='+key)
         s3_object = s3_resource.Object(bucket, key)
         data = s3_object.get()['Body'].read().decode('utf-8').splitlines()
+        #data = s3_object.get()['Body'].read().decode('utf-8').split(': ')[2].split(',')[0].strip()
+        print('data='+str(data))
+        insert_stmt=''
         lines = csv.reader(data,delimiter=' ')
-        print('after s3 read')
+        #print('lines='+lines)
         values=''
-        for line in lines:
-            m_ticks=line[0]
-            m_kart_id=line[1]
-            m_action=line[2]
-            m_value=line[3]
-            m_value_l=line[4]
-            m_value_r=line[5]
-            value='('+m_ticks+','+m_kart_id+','+m_action+','+m_value+','+m_value_l+','+m_value_r+')'
+        for raw_line in lines:
+            mon=raw_line[1]
+            day=raw_line[2]
+            time=raw_line[3]
+            year=raw_line[4]
+            m_ticks=raw_line[11]
+            m_kart_id=raw_line[12]
+            m_action=raw_line[13]
+            m_value=raw_line[14]
+            m_value_l=raw_line[15]
+            m_value_r=raw_line[16].split(',')[0].replace("\\n","").replace("\\","").replace("\"","")
+            created_at_raw=raw_line[16].split(',')[2].split('\"')[3].replace("\\","")
+            created_at="'"+created_at_raw+"'"
+            value='('+created_at+','+m_ticks+','+m_kart_id+','+m_action+','+m_value+','+m_value_l+','+m_value_r+')'
             if(values):
               values=values+','+value
             else:
               values=value
         print('values='+str(values)) 
         insert_stmt=(
-          "INSERT INTO actions (m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r)" 
+          "INSERT INTO actions (created_at,m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r)" 
           "VALUES"+values 
         )
     try:
+        print('insert_stmt in try='+insert_stmt)
         cur = conn.cursor()
         cur.execute(insert_stmt)
-        conn.commit()
-        print('insert_stmt in try='+insert_stmt)
+        cur.close()
     except Exception as e:
         print("Database connection failed due to {}".format(e)) 
     print("about the return")
