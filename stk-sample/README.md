@@ -103,3 +103,44 @@ Add bots with `--network-ai` parameter
 
 ### Check the s3 bucket for the game events 
 
+### Configure Redshift or Aurora PG
+
+Create cluster
+
+Create table:
+
+```sql
+create table actions_imp (m_ticks int,m_kart_id int,m_action int,m_value int,m_value_l int,m_value_r int,created_at timestamp with time zone,is_human int);
+```
+
+In case of Aurora PG, create a primary key on `created_at`
+
+```sql
+alter table actions set primary key on created_at
+```
+
+In case you load to Aurora PG and export to Redshift via S3:
+
+On Aurora side:
+
+`CREATE EXTENSION IF NOT EXISTS aws_s3 CASCADE;`
+
+`SELECT aws_commons.create_s3_uri('apg-export','exp','us-west-2') AS s3_uri_1 \gset;`
+
+`SELECT * FROM aws_s3.query_export_to_s3('SELECT * FROM actions', :'s3_uri_1');`
+
+example output:
+
+```
+ rows_uploaded | files_uploaded | bytes_uploaded 
+---------------+----------------+----------------
+         14434 |              1 |         750542
+(1 row)
+```
+
+On Redshift side:
+
+`copy actions from 's3://apg-export/exp' iam_role 'arn:aws:iam::584416962002:role/dms-access-for-endpoint' format as csv DELIMITER as '\t';`
+
+
+
