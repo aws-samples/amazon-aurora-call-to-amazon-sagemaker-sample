@@ -123,11 +123,14 @@ In case you load to Aurora PG and export to Redshift via S3:
 
 On Aurora side:
 
-`CREATE EXTENSION IF NOT EXISTS aws_s3 CASCADE;`
+```sql
 
-`SELECT aws_commons.create_s3_uri('apg-export','exp','us-west-2') AS s3_uri_1 \gset;`
+CREATE EXTENSION IF NOT EXISTS aws_s3 CASCADE;
 
-`SELECT * FROM aws_s3.query_export_to_s3('SELECT * FROM actions', :'s3_uri_1');`
+SELECT aws_commons.create_s3_uri('apg-export','exp','us-west-2') AS s3_uri_1 \gset;
+
+SELECT * FROM aws_s3.query_export_to_s3('SELECT * FROM actions', :'s3_uri_1');
+```
 
 example output:
 
@@ -140,7 +143,9 @@ example output:
 
 On Redshift side:
 
-`copy actions from 's3://apg-export/exp' iam_role 'arn:aws:iam::584416962002:role/dms-access-for-endpoint' format as csv DELIMITER as '\t';`
+```sql
+copy actions from 's3://apg-export/exp' iam_role 'arn:aws:iam::584416962002:role/dms-access-for-endpoint' format as csv DELIMITER as '\t';
+```
 
 
 
