@@ -15,6 +15,6 @@ do
   echo "psql generate_series.sql exit code="$?
   aws s3 cp $csv_file $s3_dest
   echo "aws s3 cp exit code="$?
-  psql -A -t -c "copy orders from '$s3_dest' iam_role 'arn:aws:iam::584416962002:role/dms-access-for-endpoint' timeformat 'YYYY-MM-DD HH:MI:SS' maxerror as 250;"
+  psql -A -t -c "copy orders_sorted from '$s3_dest' iam_role 'arn:aws:iam::584416962002:role/dms-access-for-endpoint' timeformat 'YYYY-MM-DD HH:MI:SS' maxerror as 250;"
   echo "psql copy from s3 exit code="$?
 done
