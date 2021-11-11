@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DB_HOST: c3RrLmNlbnAxdnVyOTU3NC51cy13ZXN0LTIucmVkc2hpZnQuYW1hem9uYXdzLmNvbQ==
+  DB_PASSWORD: QWRtaW4xMjM0IQ==
+  DB_USER: cG9zdGdyZXM=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: stk-redshift-creds
+  namespace: default
