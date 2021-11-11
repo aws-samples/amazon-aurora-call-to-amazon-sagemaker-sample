@@ -1,2 +1,0 @@
-set lock_timeout to 5000;
-set statement_timeout to 0;
