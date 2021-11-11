@@ -2,3 +2,5 @@
 *.swp
 function.zip
 rds.ini
+*.secrets
+*.csv
