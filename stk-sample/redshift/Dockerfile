@@ -15,6 +15,4 @@ RUN ./aws/install
 RUN mkdir /root/.aws
 COPY config /root/.aws
 
-ADD psqlrc /root/.psqlrc
-
 COPY . .
