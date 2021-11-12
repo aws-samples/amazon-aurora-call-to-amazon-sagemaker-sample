@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selectrs
+  labels:
+    app: selectrs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: selectrs
+  template:
+    metadata:
+      labels:
+        app: selectrs
+    spec:
+      #nodeSelector:
+        #lifecycle: Ec2OnDemand
+        #lifecycle: Ec2Spot
+      containers:
+      - name: selectrs
+        envFrom:
+          - secretRef: 
+              name: stk-redshift-creds
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:0.7
+        imagePullPolicy: Always
+        command: ["/select.sh"]
+        envFrom:
+          - secretRef:
+              name: stk-redshift-creds
+      #  env:
+      #    - name: SLEEP_TIME
+      #      value: "5"
+      #terminationGracePeriodSeconds: 1
