@@ -1,4 +1,4 @@
-CREATE TABLE orders (
+CREATE TABLE orders_sorted (
     id bigint identity(0,1),
     public_id bigint identity(0,1),
     idempotency_key bigint identity(0,1),
@@ -90,4 +90,4 @@ CREATE TABLE orders (
 
     text_notnull_1 text NOT NULL
 );
-
+alter table orders_sorted alter sortkey (updated_at);
