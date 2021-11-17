@@ -7,6 +7,6 @@ export PGUSER=$DB_USER
 
 while true
 do
-  psql -A -e -t -c "update orders set updated_at=getdate() where substring(text_notnull_1,1,10) like '%'||substring(md5(RANDOM()::TEXT),1,10)||'%';"
+  psql -A -e -t -c "update orders set updated_at=getdate() where substring(text_notnull_1,1,10) like '%'||substring(md5(RANDOM()::TEXT),1,4)||'%';"
   echo "psql update exit code="$?
 done
