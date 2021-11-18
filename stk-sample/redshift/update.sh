@@ -8,6 +8,6 @@ export PGUSER=$DB_USER
 while true
 do
   #psql -A -e -t -c "update orders set updated_at=getdate() where substring(text_notnull_1,1,10) like '%'||substring(md5(RANDOM()::TEXT),1,10)||'%';"
-  psql -A -e -t -c "update orders set updated_at=getdate() where idempotency_key<(select max(idempotency_key) from orders) and idempotency_key>(select max(idempotency_key)-(random() * 100000 + 1)::int from orders);"
+  psql -A -e -t -c "update orders set updated_at=getdate() where idempotency_key<(select max(idempotency_key)-10000000 from orders) and idempotency_key>(select max(idempotency_key)-(random() * 100000 + 1)::int-10000000 from orders);"
   echo "psql update exit code="$?
 done
