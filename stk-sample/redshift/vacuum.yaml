@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: selectrs
+  name: vacuumrs
   labels:
-    app: selectrs
+    app: vacuumrs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: selectrs
+      app: vacuumrs
   template:
     metadata:
       labels:
-        app: selectrs
+        app: vacuumrs
     spec:
       #nodeSelector:
         #lifecycle: Ec2OnDemand
         #lifecycle: Ec2Spot
       containers:
-      - name: selectrs
+      - name: vacuumrs
         envFrom:
           - secretRef: 
               name: stk-redshift-creds
         image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:0.8
         imagePullPolicy: Always
-        command: ["/select.sh"]
+        command: ["/vacuum.sh"]
         envFrom:
           - secretRef:
               name: stk-redshift-creds
