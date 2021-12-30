@@ -1,9 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: stk-svc
+  name: stk-arm-svc
   annotations:
-    #service.beta.kubernetes.io/aws-load-balancer-type: nlb
     service.beta.kubernetes.io/aws-load-balancer-type: "external"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
@@ -11,7 +10,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   selector:
-    app: stk
+    app: stkarm
   ports:
     - protocol: UDP
       port: 8081
@@ -23,23 +22,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: stk
-  name: stk
+    app: stkarm
+  name: stkarm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stk
+      app: stkarm
   template:
     metadata:
       labels:
-        app: stk
+        app: stkarm
     spec:
-      #nodeSelector:
-      #  lifecycle: Ec2Spot
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
       containers:
       - env:
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:0.1
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:arm0.10.0
         imagePullPolicy: Always
         name: stk
         command: ["/stk-code/start-server.sh"]

@@ -1,10 +1,10 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Resources" : {
-    "stk" : {
+    "spotsighandler" : {
         "Type" : "AWS::ECR::Repository",
         "Properties" : {
-            "RepositoryName" : "stk"
+            "RepositoryName" : "spot-sig-handler"
         }
     }
   }

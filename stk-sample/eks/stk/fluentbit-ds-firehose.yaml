@@ -46,6 +46,7 @@ data:
         Tag               kube.*
         Path              /var/log/containers/stk*.log
         DB                /var/log/flb_kube.db
+        Docker_Mode       On
         Mem_Buf_Limit     50MB
         Skip_Long_Lines   On
         Refresh_Interval  10

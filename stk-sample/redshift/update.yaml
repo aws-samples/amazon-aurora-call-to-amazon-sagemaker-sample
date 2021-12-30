@@ -22,7 +22,7 @@ spec:
         envFrom:
           - secretRef: 
               name: stk-redshift-creds
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:0.7
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:0.8
         imagePullPolicy: Always
         command: ["/update.sh"]
         envFrom:
