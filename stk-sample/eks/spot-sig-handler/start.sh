@@ -31,7 +31,7 @@ NODE=`curl -s 169.254.169.254/latest/meta-data/local-hostname`
 INSTANCE_ID=`curl -s 169.254.169.254/latest/meta-data/instance-id`
 
 kubectl label nodes ${NODE} instance-id=${INSTANCE_ID}
-
+kubectl label nodes ${NODE} agones.dev/agones-system=true
 echo "\`kubectl drain ${NODE_NAME}\` will be executed once a termination notice is made."
 
 
