@@ -43,21 +43,19 @@ def lambda_handler(event, context):
         print('data='+str(data))
         insert_stmt=''
         lines = csv.reader(data,delimiter=' ')
-        #print('lines='+lines)
         values=''
         for raw_line in lines:
-            mon=raw_line[1]
-            day=raw_line[2]
-            time=raw_line[3]
-            year=raw_line[4]
-            m_ticks=raw_line[11]
-            m_kart_id=raw_line[12]
-            m_action=raw_line[13]
-            m_value=raw_line[14]
-            m_value_l=raw_line[15]
-            m_value_r=raw_line[16].split(',')[0].replace("\\n","").replace("\\","").replace("\"","")
-            created_at_raw=raw_line[16].split(',')[2].split('\"')[3].replace("\\","")
-            created_at="'"+created_at_raw+"'"
+            #print('raw_line='+str(raw_line))
+            created_at_raw=raw_line[0].split('\"')[3].replace("T"," ").replace("Z","")
+            m_ticks=raw_line[14]
+            m_kart_id=raw_line[15]
+            m_action=raw_line[16]
+            m_value=raw_line[17]
+            m_value_l=raw_line[18]
+            m_value_r=raw_line[19].replace("\"","").replace("}","")
+            #m_value_r=raw_line[16].split(',')[0].replace("\\n","").replace("\\","").replace("\"","")
+            #created_at_raw=raw_line[16].split(',')[2].split('\"')[3].replace("\\","")
+            created_at="\'"+created_at_raw+"\'"
             value='('+created_at+','+m_ticks+','+m_kart_id+','+m_action+','+m_value+','+m_value_l+','+m_value_r+')'
             if(values):
               values=values+','+value
