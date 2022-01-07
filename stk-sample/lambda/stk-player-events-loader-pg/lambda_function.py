@@ -7,6 +7,10 @@ import pg8000
 import sys
 import os
 
+#for partitioning purpose
+import random
+country_arr=['UK','US','Canada','France','China','Japan','Germany']
+
 ENDPOINT=os.environ['ENDPOINT']
 PORT=os.environ['PORT']
 USR=os.environ['USR']
@@ -18,6 +22,7 @@ os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 client = boto3.client('rds')
 
 s3_resource = boto3.resource('s3')
+
 #print('endpoint={},port={},user={},password={},region={},dbname={}'.format(ENDPOINT,PORT,USR,PASWD,REGION,DBNAME))
 try:
   conn=pg8000.connect(
@@ -56,14 +61,15 @@ def lambda_handler(event, context):
             #m_value_r=raw_line[16].split(',')[0].replace("\\n","").replace("\\","").replace("\"","")
             #created_at_raw=raw_line[16].split(',')[2].split('\"')[3].replace("\\","")
             created_at="\'"+created_at_raw+"\'"
-            value='('+created_at+','+m_ticks+','+m_kart_id+','+m_action+','+m_value+','+m_value_l+','+m_value_r+')'
+            country="\'"+country_arr[random.randint(0,len(country_arr)-1)]+"\'"
+            value='('+created_at+','+m_ticks+','+m_kart_id+','+m_action+','+m_value+','+m_value_l+','+m_value_r+','+country+')'
             if(values):
               values=values+','+value
             else:
               values=value
         print('values='+str(values)) 
         insert_stmt=(
-          "INSERT INTO actions (created_at,m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r)" 
+          "INSERT INTO actions (created_at,m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r,country)" 
           "VALUES"+values 
         )
     try:
@@ -71,8 +77,15 @@ def lambda_handler(event, context):
         cur = conn.cursor()
         cur.execute(insert_stmt)
         cur.close()
+        # load to s3
+        strucutred_key=key.replace("raw","structured")
+        print("going to write to s3 bucket "+str(bucket) +" to "+str(strucutred_key))
+        s3object = s3_resource.Object(bucket,strucutred_key)
+        s3payload = "(created_at,m_ticks,m_kart_id,m_action,m_value,m_value_l,m_value_r,country),"+values
+        s3payload1 = s3payload.replace("),(","\n").replace("(","").replace(")","")
+        s3object.put(Body=s3payload1)
     except Exception as e:
-        print("Database connection failed due to {}".format(e)) 
+        print("Database or S3 connection failed due to {}".format(e)) 
     print("about the return")
     return {
         'statusCode': 200,
