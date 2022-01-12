@@ -1,0 +1,25 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  limits:
+    resources:
+      cpu: 100k
+  provider:
+    instanceProfile: KarpenterNodeInstanceProfile-stk-arm-us-west-2
+    kind: AWS
+    securityGroupSelector:
+      alpha.eksctl.io/cluster-name: 'stk-arm-us-west-2'
+    subnetSelector:
+      Name: 'eksctl-stk-arm-us-west-2-cluster*Public*'
+  requirements:
+  - key: karpenter.sh/capacity-type
+    operator: In
+    values: 
+    - on-demand
+  - key: kubernetes.io/arch
+    operator: In
+    values:
+    - arm64
+  ttlSecondsAfterEmpty: 30
