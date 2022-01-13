@@ -6,7 +6,7 @@ export PGPASSWORD=$DB_PASSWORD
 export PGUSER=$DB_USER
 
 csv_file="/tmp/"$RANDOM".csv"
-s3_dest="s3://apg-export/"$csv_file
+s3_dest="s3://stk-zynga/tmp/"$csv_file
 
 
 while true

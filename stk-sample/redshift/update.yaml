@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: updaters
+  name: appupdate
   labels:
-    app: updaters
+    app: appupdate
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: updaters
+      app: appupdate
   template:
     metadata:
       labels:
-        app: updaters
+        app: appupdate
     spec:
-      #nodeSelector:
-        #lifecycle: Ec2OnDemand
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
         #lifecycle: Ec2Spot
       containers:
-      - name: updaters
+      - name: appupdate
         envFrom:
           - secretRef: 
               name: stk-redshift-creds
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:0.8
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:arm-0.9
         imagePullPolicy: Always
         command: ["/update.sh"]
         envFrom:

@@ -7,20 +7,17 @@ spec:
     resources:
       cpu: 100k
   provider:
-    apiVersion: extensions.karpenter.sh/v1alpha1
-    instanceProfile: KarpenterNodeInstanceProfile-arm-stk-us-west-2
+    instanceProfile: KarpenterNodeInstanceProfile-arm-us-west-2
     kind: AWS
     securityGroupSelector:
-      kubernetes.io/cluster/arm-stk-us-west-2: '*'
+      kubernetes.io/cluster/arm-us-west-2: owned
     subnetSelector:
-      Name: '*Public*'
-      #kubernetes.io/cluster/arm-stk-us-west-2: '*'
+      Name: 'eksctl-arm-us-west-2-cluster*Public*'
   requirements:
   - key: karpenter.sh/capacity-type
     operator: In
     values: 
     - on-demand
-#    - spot
   - key: kubernetes.io/arch
     operator: In
     values:
