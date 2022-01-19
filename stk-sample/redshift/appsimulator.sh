@@ -44,9 +44,9 @@ for i in $_seq; do
   echo "i=" $i
   aws sqs send-message --queue-url ${QUEUE_URL} --message-body "$i"
 
-  updates=`echo $(( sinx * 3/100 + 1 ))`
-  inserts=`echo $(( sinx * 3/2/100 + 1 ))`
-  selects=`echo $(( sinx / 5 ))`
+  updates=`echo $(( sinx * 3/200 + 1 ))`
+  inserts=`echo $(( sinx * 3/2/200 + 1 ))`
+  selects=`echo $(( sinx / 5 /8 ))`
   queue_size=`aws sqs get-queue-attributes --queue-url ${APP_QUEUE_URL} --attribute-names ApproximateNumberOfMessages| jq '.Attributes.ApproximateNumberOfMessages'|sed 's/"//g'`
   echo "queue_size="$queue_size
   if (( $queue_size >= 1000 )); then

@@ -89,8 +89,8 @@ spec:
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
         resources:
-          limits:
-            memory: 500Mi
+          #limits:
+          #  memory: 500Mi
           requests:
             cpu: 50m
             memory: 60Mi
