@@ -3,7 +3,7 @@
 account=$(aws sts get-caller-identity --output text --query Account)
 region="us-west-2"
 repo="stk"
-ver="arm0.10.0"
+ver="arm0.11.0"
 
 repo_name='.dkr.ecr.'$region'.amazonaws.com/'$repo':'$ver
 repo_url=$account$repo_name

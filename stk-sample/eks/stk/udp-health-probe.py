@@ -19,10 +19,12 @@ if peer:
         print("%s: CONNECT" % event.peer.address)
     elif event.type == enet.EVENT_TYPE_DISCONNECT:
         print("%s: DISCONNECT" % event.peer.address)
-        run = False
+        os.system("service nginx stop")
+'''
+    #optional - try to send data over the wire
     elif event.type == enet.EVENT_TYPE_RECEIVE:
         print("%s: IN:  %r" % (event.peer.address, event.packet.data))
     msg = bytes(bytearray([random.randint(0,255) for i in range(40)]))
     packet = enet.Packet(msg)
     peer.send(0, packet)
-
+'''
