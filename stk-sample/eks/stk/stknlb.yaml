@@ -38,8 +38,6 @@ spec:
         karpenter.sh/provisioner-name: default
       containers:
       - env:
-        - name: TCP_SOCKET_PORT
-          value: "8080"
         - name: UDP_SOCKET_PORT
           value: "8081"
         - name: UDP_SOCKET_IP
@@ -57,16 +55,17 @@ spec:
           - name: udp
             containerPort: 8081
             protocol: UDP
-        #readinessProbe:
-        #  tcpSocket:
-        #    port: 8080
-        #  initialDelaySeconds: 5
-        #  periodSeconds: 10
-        #livenessProbe:
-        #  tcpSocket:
-        #    port: 8080
-        #  initialDelaySeconds: 5
-        #  periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          exec:
+            command:
+            - /udp-health-probe.py
+          initialDelaySeconds: 10
+          periodSeconds: 10
         resources:
           requests:
             cpu: 500m
