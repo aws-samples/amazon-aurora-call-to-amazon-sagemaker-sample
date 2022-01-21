@@ -8,6 +8,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: TCP    
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-ip-address-type: "dualstack"
 spec:
   selector:
     app: stkarm
