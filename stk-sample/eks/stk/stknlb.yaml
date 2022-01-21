@@ -38,13 +38,15 @@ spec:
         karpenter.sh/provisioner-name: default
       containers:
       - env:
+        - name: TCP_SOCKET_PORT
+          value: "8080"
         - name: UDP_SOCKET_PORT
           value: "8081"
         - name: UDP_SOCKET_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:arm0.10.0
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:arm0.11.0
         imagePullPolicy: Always
         name: stk
         command: ["/stk-code/start-server.sh"]
