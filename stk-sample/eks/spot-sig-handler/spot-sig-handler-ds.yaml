@@ -65,12 +65,12 @@ spec:
       #hostNetwork: true
       containers:
       - name: spot-interrupt-handler
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/spot-sig-handler:0.1arm
+        image: 498254202105.dkr.ecr.us-west-2.amazonaws.com/spot-sig-handler:0.1arm
         imagePullPolicy: Always
         command: ["/start.sh"]
         env:
         - name: QUEUE_URL
-          value: "https://sqs.us-west-2.amazonaws.com/584416962002/spot-sig"
+          value: "https://sqs.us-west-2.amazonaws.com/498254202105/spot-sig"
         - name: AWS_DEFAULT_REGION
           value: "us-west-2"
         - name: POD_NAME

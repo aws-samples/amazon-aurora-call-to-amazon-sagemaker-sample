@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: stk-arm-svc
+  name: stk-arm-svc1
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "external"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: TCP    
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    service.beta.kubernetes.io/aws-load-balancer-ip-address-type: "dualstack"
+    service.beta.kubernetes.io/aws-load-balancer-ip-address-type: dualstack
 spec:
   selector:
     app: stkarm
@@ -35,8 +35,8 @@ spec:
       labels:
         app: stkarm
     spec:
-      nodeSelector:
-        karpenter.sh/provisioner-name: default
+    #  nodeSelector:
+    #    karpenter.sh/provisioner-name: default
       containers:
       - env:
         - name: UDP_SOCKET_PORT
@@ -45,7 +45,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/stk:arm0.11.0
+        image: 498254202105.dkr.ecr.us-west-2.amazonaws.com/stk:arm0.11.0
         imagePullPolicy: Always
         name: stk
         command: ["/stk-code/start-server.sh"]

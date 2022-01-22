@@ -1,0 +1,41 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: bliz-ipv6-arm-usw-2
+  region: us-west-2
+  version: "1.21"
+
+kubernetesNetworkConfig:
+  ipFamily: IPv6
+
+vpc:
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
+
+iam:
+  withOIDC: true
+
+addons:
+  - name: vpc-cni
+    version: v1.10.1-eksbuild.1 # optional
+  - name: coredns
+    version: v1.8.4-eksbuild.1 # optional
+  - name: kube-proxy
+    version: v1.21.2-eksbuild.2 # optional
+
+managedNodeGroups:
+  - instanceType: "c6g.xlarge"
+    amiFamily: AmazonLinux2
+    name: ng-1
+    desiredCapacity: 1
+    maxSize: 10
+    minSize: 1
+    ssh:
+      allow: true
+      publicKeyPath: ~/.ssh/id_rsa.pub
+    tags:
+      project: eks-udp-ipv6-exp
+    labels:  
+      project: eks-udp-ipv6-exp
