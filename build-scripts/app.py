@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import time
+import os
+from sagemaker import get_execution_role, session
+import boto3
+
 from aws_cdk import (
-    aws_stepfunctions as _aws_stepfunctions,
-    aws_stepfunctions_tasks as _aws_stepfunctions_tasks,
-    aws_stepfunctions as sfn,
-    aws_ecr as ecr,
     aws_s3 as aws_s3,
-    aws_lambda as _lambda,
+    aws_sagemaker as sagemaker,
     App, Duration, Stack
 )
 
@@ -14,55 +15,69 @@ class SMStack(Stack):
   def __init__(self, app: App, id: str, **kwargs) -> None:
     super().__init__(app, id, **kwargs)
 
-    bucket = aws_s3.Bucket(self, "aurora_ml")
-    # need to copy the model.tar.gz to the bucket
-    create_model = _aws_stepfunctions_tasks.SageMakerCreateModel(self, "Sagemaker",
-      model_name="aurora-ml-churn",
-      primary_container=_aws_stepfunctions_tasks.ContainerDefinition(
-        image=_aws_stepfunctions_tasks.DockerImage.from_registry("246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3"),
-        mode=_aws_stepfunctions_tasks.Mode.SINGLE_MODEL,
-        model_s3_location=_aws_stepfunctions_tasks.S3Location.from_bucket(bucket,"/model.tar.gz")
-      )#,
-      #containers=[
-      #  _aws_stepfunctions_tasks.ContainerDefinition(
-      #  image=_aws_stepfunctions_tasks.DockerImage.from_registry("174872318107.dkr.ecr.us-west-2.amazonaws.com/mxnet-algorithms:inference-cpu"),
-      #  mode=_aws_stepfunctions_tasks.Mode.SINGLE_MODEL,
-      #  model_s3_location=_aws_stepfunctions_tasks.S3Location.from_bucket(bucket,"/sagemaker/DEMO-autopilot-churn/output/automl-churn-04-21-04-53/tuning/automl-chu-dpp9-mlp/automl-churn-04-21-04-53BBz55kvP-006-3e2cb1e8/output/model.tar.gz")
-      #  ),
-      #  _aws_stepfunctions_tasks.ContainerDefinition(
-      #  image=_aws_stepfunctions_tasks.DockerImage.from_registry("246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3"),
-      #  mode=_aws_stepfunctions_tasks.Mode.SINGLE_MODEL,
-      #  model_s3_location=_aws_stepfunctions_tasks.S3Location.from_bucket(bucket,"/output/automl-churn-04-21-04-53/data-processor-models/automl-churn-04-21-04-53-dpp9-1-3e12858ef21c4d309a803adb5e2cd58/output/model.tar.gz")
-      #  )
-      #]
-    )
- 
-    wait_job = _aws_stepfunctions.Wait(
-      self, "Wait 30 Seconds",
-      time=_aws_stepfunctions.WaitTime.duration(
-      Duration.seconds(30))
-    )    
-    fail_job = _aws_stepfunctions.Fail(
-      self, "Fail",
-      cause='AWS Batch Job Failed',
-      error='DescribeJob returned FAILED'
-    )
-    succeed_job = _aws_stepfunctions.Succeed(
-      self, "Succeeded",
-      comment='AWS Batch Job succeeded'
-    )
+    model = sagemaker.CfnModel(self, "aurora-ml",
+      execution_role_arn="arn:aws:iam::212076617619:role/service-role/AmazonSageMaker-ExecutionRole-20220331T142126",
+      model_name="aurora-ml",
 
-    # Create Chain
-    #definition = create_model.next(wait_job)
-    #  .when(_aws_stepfunctions.Condition.string_equals('$.status', 'FAILED'), fail_job)
-    #  .when(_aws_stepfunctions.Condition.string_equals('$.status', 'SUCCEEDED'), succeed_job)
-    #  .otherwise(wait_job))
-
-    # Create state machine
-    sm = _aws_stepfunctions.StateMachine(
-      self, "StateMachine",
-      definition=create_model,
-      timeout=Duration.minutes(5))
+      containers=[sagemaker.CfnModel.ContainerDefinitionProperty(
+          image="174872318107.dkr.ecr.us-west-2.amazonaws.com/mxnet-algorithms:inference-cpu",
+          mode="SingleModel",
+          model_data_url="s3://sagemaker-us-west-2-212076617619/mxnet-algorithms/model.tar.gz", 
+          environment={
+            "MAX_CONTENT_LENGTH":20971520,
+            "ML_APPLICATION":"mlp",
+            "SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT":"text/csv",
+            "SAGEMAKER_INFERENCE_OUTPUT":"predicted_label",
+            "SAGEMAKER_INFERENCE_SUPPORTED":"predicted_label,probability,probabilities"
+          }
+        ),
+        sagemaker.CfnModel.ContainerDefinitionProperty(
+          image="246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3",
+          mode="SingleModel",
+          model_data_url="s3://sagemaker-us-west-2-212076617619/sagemaker-sklearn-automl/model.tar.gz",
+          environment={
+            "AUTOML_TRANSFORM_MODE":"inverse-label-transform",
+            "SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT":"text/csv",
+            "SAGEMAKER_INFERENCE_INPUT":"predicted_label",
+            "SAGEMAKER_INFERENCE_OUTPUT":"predicted_label",
+            "SAGEMAKER_INFERENCE_SUPPORTED":"predicted_label,probability,labels,probabilities",
+            "SAGEMAKER_PROGRAM":"sagemaker_serve",
+            "SAGEMAKER_SUBMIT_DIRECTORY":"/opt/ml/model/code"
+          }
+        ),
+      ],
+      primary_container=sagemaker.CfnModel.ContainerDefinitionProperty(
+        image="246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3",
+        mode="SingleModel",
+        model_data_url="s3://sagemaker-us-west-2-212076617619/model.tar.gz",
+        environment={
+          "AUTOML_SPARSE_ENCODE_RECORDIO_PROTOBUF":1,
+          "AUTOML_TRANSFORM_MODE":"feature-transform",
+          "SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT":"application/x-recordio-protobuf",
+          "SAGEMAKER_PROGRAM":"sagemaker_serve",
+          "SAGEMAKER_SUBMIT_DIRECTORY":"/opt/ml/model/code"
+        }
+      ),
+    )
+#    endpoint_config = sagemaker.CfnEndpointConfig(
+#      self,
+#      id="aurora-ml-endpoint-config",
+#      production_variants=[
+#        sagemaker.CfnEndpointConfig.ProductionVariantProperty(
+#          initial_instance_count=1,
+#          initial_variant_weight=1.0,
+#          instance_type="ml.m5.xlarge",
+#          model_name="aurora-ml",
+#          variant_name="main",
+#        )
+#      ],
+#    )
+#    endpoint_config.add_depends_on(model)
+#    endpoint = sagemaker.CfnEndpoint(
+#      self,
+#      id= "aurora-ml-endpoint",
+#      endpoint_config_name=endpoint_config.attr_endpoint_config_name
+#    )
 
 app = App()
 SMStack(app, "aurora-ml")
