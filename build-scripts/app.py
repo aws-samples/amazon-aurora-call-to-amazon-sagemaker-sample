@@ -4,8 +4,20 @@ import time
 import os
 from sagemaker import get_execution_role, session
 import boto3
+from aws_cdk import App, Environment, Fn
+
+vpc_name="aws-controltower-VPC"
+execution_role_arn="arn:aws:iam::212076617619:role/service-role/AmazonSageMaker-ExecutionRole-20220331T142126"
+sg="sg-0fb220c9a34b5438c"
+container1_image="public.ecr.aws/p9d8y1e7/sagemaker-sklearn-automl:2.5-1-cpu-py3"
+container1_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz"
+container2_image="public.ecr.aws/p9d8y1e7/sagemaker-xgboost:1.3-1-cpu-py3"
+container2_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/tuning/auroraml-c-dpp0-xgb/auroraml-churn-endpointpjftIEpiX-237-a8ba5390/output/model.tar.gz"
+container3_image="public.ecr.aws/p9d8y1e7/sagemaker-sklearn-automl:2.5-1-cpu-py3"
+container3_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz"
 
 from aws_cdk import (
+    aws_ec2 as ec2,
     aws_s3 as aws_s3,
     aws_sagemaker as sagemaker,
     App, Duration, Stack
@@ -14,14 +26,30 @@ from aws_cdk import (
 class SMStack(Stack):
   def __init__(self, app: App, id: str, **kwargs) -> None:
     super().__init__(app, id, **kwargs)
-
+     
+    vpc = ec2.Vpc.from_lookup(self,"VPC",vpc_name=vpc_name)
+    security_group=ec2.SecurityGroup(self, "auroramlsg",vpc=vpc) 
+    #security_group=ec2.SecurityGroup(self,"SG",vpc=vpc,allow_all_outbound=True)
+    #security_group_obj=ec2.CfnSecurityGroup(self,"auroramlsg",vpc_id=vpc.vpc_id,group_description="auroramlsg")
+    print(security_group.security_group_id)
+    subnets = vpc.select_subnets(
+      subnet_type=ec2.SubnetType.PRIVATE_WITH_NAT
+    )
     model = sagemaker.CfnModel(self, "aurora-ml",
-      execution_role_arn="arn:aws:iam::212076617619:role/service-role/AmazonSageMaker-ExecutionRole-20220331T142126",
+      execution_role_arn=execution_role_arn,
       model_name="aurora-ml",
+      vpc_config=sagemaker.CfnModel.VpcConfigProperty(
+        security_group_ids=[sg],
+        subnets=subnets.subnet_ids
+      ),
       containers=[sagemaker.CfnModel.ContainerDefinitionProperty(
-          image="246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3",
+          container_hostname="container1",
+          image=container1_image,
+          image_config=sagemaker.CfnModel.ImageConfigProperty(
+            repository_access_mode="Vpc"
+          ),
           mode="SingleModel",
-          model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz",
+          model_data_url=container1_model_data_url,
           environment={
             "AUTOML_SPARSE_ENCODE_RECORDIO_PROTOBUF":1,
             "AUTOML_TRANSFORM_MODE":"feature-transform",
@@ -31,9 +59,13 @@ class SMStack(Stack):
           }
         ),
         sagemaker.CfnModel.ContainerDefinitionProperty(
-          image="246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-xgboost:1.3-1-cpu-py3",
+          container_hostname="container2",
+          image=container2_image,
+          image_config=sagemaker.CfnModel.ImageConfigProperty(
+            repository_access_mode="Vpc"
+          ),
           mode="SingleModel",
-          model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/tuning/auroraml-c-dpp0-xgb/auroraml-churn-endpointpjftIEpiX-237-a8ba5390/output/model.tar.gz",
+          model_data_url=container2_model_data_url,
           environment={
             "MAX_CONTENT_LENGTH":20971520,
             "SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT":"text/csv",
@@ -42,9 +74,13 @@ class SMStack(Stack):
           }
         ),
         sagemaker.CfnModel.ContainerDefinitionProperty(
-          image="246618743249.dkr.ecr.us-west-2.amazonaws.com/sagemaker-sklearn-automl:2.5-1-cpu-py3",
+          container_hostname="container3",
+          image=container3_image,
+          image_config=sagemaker.CfnModel.ImageConfigProperty(
+            repository_access_mode="Vpc"
+          ),
           mode="SingleModel",
-          model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz",
+          model_data_url=container3_model_data_url,
           environment={
             "AUTOML_TRANSFORM_MODE":"inverse-label-transform",
             "SAGEMAKER_DEFAULT_INVOCATIONS_ACCEPT":"text/csv",
@@ -76,7 +112,9 @@ class SMStack(Stack):
       id= "aurora-ml-endpoint",
       endpoint_config_name=endpoint_config.attr_endpoint_config_name
     )
+    print(security_group.security_group_id)
 
 app = App()
-SMStack(app, "aurora-ml")
+env_us=Environment(account="212076617619", region="us-west-2")
+SMStack(app,"aurora-ml",env=env_us)
 app.synth()
