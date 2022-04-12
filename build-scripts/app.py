@@ -7,14 +7,14 @@ import boto3
 from aws_cdk import App, Environment, Fn
 
 vpc_name="aws-controltower-VPC"
-execution_role_arn="arn:aws:iam::212076617619:role/service-role/AmazonSageMaker-ExecutionRole-20220331T142126"
 sg="sg-0fb220c9a34b5438c"
+execution_role_arn="arn:aws:iam::212076617619:role/service-role/AmazonSageMaker-ExecutionRole-20220331T142126"
 container1_image="public.ecr.aws/p9d8y1e7/sagemaker-sklearn-automl:2.5-1-cpu-py3"
-container1_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz"
+container1_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/container1_model_data.tar.gz"
 container2_image="public.ecr.aws/p9d8y1e7/sagemaker-xgboost:1.3-1-cpu-py3"
-container2_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/tuning/auroraml-c-dpp0-xgb/auroraml-churn-endpointpjftIEpiX-237-a8ba5390/output/model.tar.gz"
+container2_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/container2_model_data.tar.gz"
 container3_image="public.ecr.aws/p9d8y1e7/sagemaker-sklearn-automl:2.5-1-cpu-py3"
-container3_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/auroraml-churn-endpoint/data-processor-models/auroraml-churn-endpoint-dpp0-1-71ca99eb8e894875ada4a2648ab6b555/output/model.tar.gz"
+container3_model_data_url="s3://sagemaker-studio-k4u9t44y3hq/container3_model_data.tar.gz"
 
 from aws_cdk import (
     aws_ec2 as ec2,
@@ -29,9 +29,6 @@ class SMStack(Stack):
      
     vpc = ec2.Vpc.from_lookup(self,"VPC",vpc_name=vpc_name)
     security_group=ec2.SecurityGroup(self, "auroramlsg",vpc=vpc) 
-    #security_group=ec2.SecurityGroup(self,"SG",vpc=vpc,allow_all_outbound=True)
-    #security_group_obj=ec2.CfnSecurityGroup(self,"auroramlsg",vpc_id=vpc.vpc_id,group_description="auroramlsg")
-    print(security_group.security_group_id)
     subnets = vpc.select_subnets(
       subnet_type=ec2.SubnetType.PRIVATE_WITH_NAT
     )
