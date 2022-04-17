@@ -1,0 +1,19 @@
+{
+  "version": "17.0.0",
+  "files": {
+    "48b96a745b24b7acb1d39500cacea6846f83714f41a294db9e270c6014eb7e5f": {
+      "source": {
+        "path": "aurora-ml-pg.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "48b96a745b24b7acb1d39500cacea6846f83714f41a294db9e270c6014eb7e5f.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

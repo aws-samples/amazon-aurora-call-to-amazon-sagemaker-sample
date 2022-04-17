@@ -8,7 +8,6 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: TCP    
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    service.beta.kubernetes.io/aws-load-balancer-ip-address-type: dualstack
 spec:
   selector:
     app: stkarm
@@ -35,8 +34,8 @@ spec:
       labels:
         app: stkarm
     spec:
-    #  nodeSelector:
-    #    karpenter.sh/provisioner-name: default
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
       containers:
       - env:
         - name: UDP_SOCKET_PORT
