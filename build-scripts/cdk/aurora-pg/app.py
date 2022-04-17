@@ -13,16 +13,17 @@ class RDSStack(Stack):
     vpc = ec2.Vpc(self, "VPC")
 
     cluster = rds.DatabaseCluster(self, "db",
-    engine=rds.DatabaseClusterEngine.aurora_postgres(version=rds.AuroraPostgresEngineVersion.VER_13_4),
-    credentials=rds.Credentials.from_generated_secret("postgres"),  # Optional - will default to 'admin' username and generated password
-    instance_props=rds.InstanceProps(
+      engine=rds.DatabaseClusterEngine.aurora_postgres(version=rds.AuroraPostgresEngineVersion.VER_13_4),
+      credentials=rds.Credentials.from_generated_secret("postgres"),  # Optional - will default to 'admin' username and generated password
+      instance_props=rds.InstanceProps(
         #instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE4_GRAVITON, ec2.InstanceSize.LARGE),
-        instance_type=ec2.InstanceType.of(ec2.InstanceClass.MEMORY_INTENSIVE_2_GRAVITON2,ec2.InstanceSize.LARGE),
-        vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE),
+        instance_type=ec2.InstanceType.of(ec2.InstanceClass.MEMORY6_GRAVITON,ec2.InstanceSize.LARGE),
+        vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
         vpc=vpc,
         publicly_accessible=True
+      )
     )
-)
+    cluster.connections.allow_from_any_ipv4(ec2.Port.all_traffic(), "Open to the world")
 
 app = App()
 RDSStack(app, "aurora-ml-pg")
