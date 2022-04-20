@@ -1,2 +1,0 @@
-smdebug_rulesconfig
-tests
