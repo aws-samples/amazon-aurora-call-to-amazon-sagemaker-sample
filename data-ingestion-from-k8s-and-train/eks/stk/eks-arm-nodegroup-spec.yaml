@@ -1,0 +1,34 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: stk-arm-us-west-2
+  region: us-west-2
+
+nodeGroups:
+  - name: armondemand
+    labels:  
+      project: stk
+      instance.size: xlarge
+      lifecycle: Ec2OnDemand
+      aws.amazon.com/spot: "false"
+    maxSize: 10
+    minSize: 1
+    ssh:
+      allow: true
+      publicKeyPath: ~/.ssh/id_rsa.pub
+    instancesDistribution:
+      instanceTypes: ["c6g.xlarge","c6gn.xlarge","c6gd.xlarge","t4g.xlarge","m6gd.xlarge","m6g.xlarge","r6gd.xlarge","r6g.xlarge"]
+      onDemandPercentageAboveBaseCapacity: 100
+      onDemandBaseCapacity: 1
+    tags:
+      k8s.io/cluster-autoscaler/node-template/label/lifecycle: Ec2OnDemand
+      k8s.io/cluster-autoscaler/node-template/label/project: stk
+      k8s.io/cluster-autoscaler/node-template/label/instance.size: xlarge
+      k8s.io/cluster-autoscaler/node-template/label/aws.amazon.com/spot: "false"
+    iam:
+      withAddonPolicies:
+        cloudWatch: true
+        albIngress: true
+        externalDNS: true
+        certManager: true
