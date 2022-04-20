@@ -5,6 +5,6 @@ This is sample demonstrates a tool that helps organizations to easily access ML 
 The following are examples that demonstrate the aurora-ml connector
 
 ## The cheating problem in gaming
-### [cheating in MMO game sample](./multi-model-cheat-in-gaming) demonstrates a multi-model example 
-### [detecting bots in high-frequency game](./data-ingestion-from-k8s-and-train) demonstrates a realtime ingestion of application events to postgresql that used for training a model 
+### [Cheating in MMO game sample](./multi-model-cheat-in-gaming) demonstrates a multi-model example 
+### [Detecting bots in high-frequency game](./data-ingestion-from-k8s-and-train) demonstrates a realtime ingestion of application events to postgresql that used for training a model 
 ### [mlops customer churn sample](./mlops-customer-churn) demonstrates Continuous Learning with SageMaker AutoML 
