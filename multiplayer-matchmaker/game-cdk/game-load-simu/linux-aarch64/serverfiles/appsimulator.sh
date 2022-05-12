@@ -44,7 +44,7 @@ for i in $_seq; do
   aws sqs send-message --queue-url ${QUEUE_URL} --message-body "$i"
 
   clients=`echo $(( sinx * 4 ))`
-  servers=`echo $(( sinx * 1/2 ))`
+  servers=`echo $(( sinx * 1 ))`
   deploys=`kubectl get deploy | grep $DEPLOY_PREFIX | awk '{print $1}'`
   for deploy in $deploys
   do
