@@ -33,6 +33,7 @@ CREATE TABLE sessions (
  max_players smallint NOT NULL,
  difficulty smallint NOT NULL,
  session_length interval,
+ player_skill char(24),
  is_active smallint,
  PRIMARY KEY (id,created_at)
 ) PARTITION BY RANGE (created_at);
@@ -52,6 +53,7 @@ CREATE TABLE server_sessions (
  p_track char(24),
  p_tracktheme char(24),
  p_mode char(24),
+ p_skill char(24),
  session_length interval,
  PRIMARY KEY (id,created_at)
 ) PARTITION BY RANGE (created_at);
