@@ -4,3 +4,5 @@ function.zip
 rds.ini
 *.secrets
 *.csv
+*.out
+*/.venv/*

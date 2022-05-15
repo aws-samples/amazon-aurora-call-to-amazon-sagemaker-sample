@@ -92,4 +92,4 @@ SELECT aws_commons.create_s3_uri(
 ```sql
 SELECT * FROM aws_s3.query_export_to_s3('select s_location,s_track,s_tracktheme,s_mode,s_difficulty,p_location,p_track,p_tracktheme,p_mode,p_difficulty,EXTRACT(MINUTE FROM session_length) from server_sessions where session_length is not null and p_skill is not null', :'s3_uri_1', options :='header true,format csv, delimiter $$,$$');
 ```
-We wants sessions records that are already closed i.e., `session_length` populated. 
+We want sessions records that are already closed i.e., `session_length` populated. 
