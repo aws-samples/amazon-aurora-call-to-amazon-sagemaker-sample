@@ -3,28 +3,28 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: stkcli
-  name: stkcli
+    app: stkcli-noml
+  name: stkcli-noml
 spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-  #replicas: 1
+  replicas: 1
   selector:
     matchLabels:
-      app: stkcli
+      app: stkcli-noml
   template:
     metadata:
       labels:
-        app: stkcli
+        app: stkcli-noml
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: default
       serviceAccountName: gs-admin
       containers:
-      - name: stkcli
+      - name: stk
         envFrom:
           - secretRef:
               name: db-creds
@@ -33,6 +33,8 @@ spec:
           value: "--connection-debug --auto-connect --owner-less"
         - name: SIZE_OF_GAME_SAMPLE
           value: "1000"
+        - name: APP
+          value: stksrv-noml
         - name: CW_NS
           value: "supertuxkart"
         - name: CLIENT_STDOUT

@@ -54,17 +54,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: stk
-  name: stk
+    app: stksrv-noml
+  name: stksrv-noml
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stk
+      app: stksrv-noml
   template:
     metadata:
       labels:
-        app: stk
+        app: stksrv-noml
     spec:
       shareProcessNamespace: true
       nodeSelector:
@@ -83,6 +83,8 @@ spec:
           value: "--owner-less --auto-connect --log=0"
         - name: MAX_PLAYERS
           value: "24"
+        - name: APP
+          value: stksrv-noml
         - name: UDP_SOCKET_IP
           valueFrom:
             fieldRef:
