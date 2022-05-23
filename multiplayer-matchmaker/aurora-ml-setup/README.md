@@ -180,7 +180,7 @@ AS $$
 select estimate_session_length(s_location,s_track,s_tracktheme,s_mode,s_difficulty,p_difficulty,p_location,p_track,p_tracktheme,p_mode,p_skill) from server_sessions;
 ```
 
-Our supertuxkart simulation calls the model for the predicted availiable game server that predicated to provide maximum session length. 
+Our supertuxkart simulation [calls](game-cdk/game-server/linux-aarch64/serverfiles/start-client.sh) the model for the predicted availiable game server that predicated to provide maximum session length. 
 
 Before you play or watch game getting played (1) download the [game client](https://supertuxkart.net/Download); and (2) discover availiable server by executing:
 
