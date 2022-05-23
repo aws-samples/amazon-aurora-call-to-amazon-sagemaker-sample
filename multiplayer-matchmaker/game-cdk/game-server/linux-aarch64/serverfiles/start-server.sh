@@ -15,13 +15,12 @@ echo export SERVER_LOCATION=$game_location >> /root/.bashrc
 game_difficulty=`echo $(( RANDOM % 4 ))`
 echo export DIFFICULTY=$game_difficulty >> /root/.bashrc
 
-game_theme_track=`psql -A -q -t -w -c "/*start-server.sh*/select theme from trackmap where track='$game_track';"`
+game_theme_track=`psql -A -q -t -w -c "/*start-server.sh*/select theme from trackmap where track='$game_track';"|sed 's/ //g'`
 echo export TRACKTHEME=$game_theme_track >> /root/.bashrc
 
-game_max_players=`awk -v min=16 -v max=64 'BEGIN{srand(); print int(min+rand()*(max-min+1))}'`
+game_max_players=`awk -v min=36 -v max=64 'BEGIN{srand(); print int(min+rand()*(max-min+1))}'`
 echo export MAX_PLAYERS=$game_max_players >> /root/.bashrc
 
-#LOCATION=`kubectl get nodes -o json | jq '.items[].metadata.labels."topology.kubernetes.io/zone"'`
 PUBLIC_IPV4=`/get-public-ipv4.py`
 ENDPOINT=$PUBLIC_IPV4:$game_server_dynamic_port
 echo export ENDPOINT=$ENDPOINT >> /root/.bashrc
