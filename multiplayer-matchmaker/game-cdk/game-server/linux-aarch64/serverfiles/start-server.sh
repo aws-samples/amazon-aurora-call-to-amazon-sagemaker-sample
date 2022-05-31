@@ -22,14 +22,17 @@ game_max_players=`awk -v min=36 -v max=64 'BEGIN{srand(); print int(min+rand()*(
 echo export MAX_PLAYERS=$game_max_players >> /root/.bashrc
 
 PUBLIC_IPV4=`/get-public-ipv4.py`
+echo export UDP_SOCKET_IP=$PUBLIC_IPV4 >> /root/.bashrc
 ENDPOINT=$PUBLIC_IPV4:$game_server_dynamic_port
 echo export ENDPOINT=$ENDPOINT >> /root/.bashrc
-id=`psql -A -e -t -U postgres -w -c "/*start-server.sh*/insert into servers(created_at,updated_at,location,endpoint,mode,track,tracktheme,max_players,difficulty,is_ready) values (NOW(),NOW(),'$game_location','"$ENDPOINT"','$game_mode','$game_track','$game_theme_track','$game_max_players','$game_difficulty',1) returning id;"`
+id=`psql -A -q -t -w -c "/*start-server.sh*/insert into servers(created_at,updated_at,location,endpoint,mode,track,tracktheme,max_players,difficulty,is_ready) values (NOW(),NOW(),'$game_location','"$ENDPOINT"','$game_mode','$game_track','$game_theme_track','$game_max_players','$game_difficulty',1) returning id;"`
 echo "psql exit code="$?
 if [ -z "$id" ]
 then
   echo "ERR-DB"
 fi
+
+echo export SERVER_ID=$id >> /root/.bashrc
 
 cd /stk-code
 /cmake_build/bin/supertuxkart --server-config=/stk-code/server_config.xml --mode $MODE --port=$game_server_dynamic_port $MISC_ARGS --difficulty=$game_difficulty --max-players=$game_max_players --track=$game_track

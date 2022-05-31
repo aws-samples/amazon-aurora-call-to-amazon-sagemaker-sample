@@ -54,17 +54,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: stksrv-noml
-  name: stksrv-noml
+    app: stksrv
+  name: stksrv
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stksrv-noml
+      app: stksrv
   template:
     metadata:
       labels:
-        app: stksrv-noml
+        app: stksrv
     spec:
       shareProcessNamespace: true
       nodeSelector:
@@ -84,7 +84,7 @@ spec:
         - name: MAX_PLAYERS
           value: "24"
         - name: APP
-          value: stksrv-noml
+          value: stksrv
         - name: UDP_SOCKET_IP
           valueFrom:
             fieldRef:
@@ -101,7 +101,7 @@ spec:
             command:
             - /udp-health-probe.py
           initialDelaySeconds: 300
-          periodSeconds: 1000
+          periodSeconds: 500
         securityContext:
           capabilities:
             add:

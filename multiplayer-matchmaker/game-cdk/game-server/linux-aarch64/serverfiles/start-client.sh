@@ -20,14 +20,17 @@ echo export MAX_PLAYERS=$player_max_players >> /root/.bashrc
 
 player_theme_track=`psql -A -q -t -w -c "/*start-client.sh*/select theme from trackmap where track='$player_track';"|sed 's/ //g'`
 echo export TRACKTHEME=$player_theme_track >> /root/.bashrc
-	
-#endpoint=`psql -A -q -t -w -c "/*start-client.sh*/select endpoint from servers where is_ready=1 and substr(location,1,7)=substr('"$player_location"',1,7) and max_players>num_active_session+"$NETWORK_AI" and tracktheme='$player_theme_track' order by created_at desc limit 1;"`
 
-#multi_class_model_endpoint=`psql -A -q -t -w -c "/*start-client.sh-test-model*/select endpoint from (select endpoint,max(ltrim(split_part(estimate_session_length(location,track,tracktheme,mode,difficulty,'$player_difficulty','$player_location','$player_track','$player_theme_track','$player_mode','$player_skill'),',',1),'(')::INTEGER) as estimate from servers where is_ready=1 and max_players>num_active_session+"$NETWORK_AI" and created_at>NOW()-'24 hour'::INTERVAL group by endpoint order by estimate desc limit 1) as t;"`
+if [[ $APP == 'stksrv-noml' ]]
+then
+  endpoint=`psql -A -q -t -w -c "/*start-client.sh*/select endpoint from servers where is_ready=1 and substr(location,1,7)=substr('"$player_location"',1,7) and max_players>num_active_session+"$NETWORK_AI" and tracktheme='$player_theme_track' order by created_at desc limit 1;"`
+fi
 
-regression_model_endpoint=`psql -A -q -t -w -c "/*start-client.sh-test-model*/select endpoint from (select endpoint,max(estimate_session_length_reg(location,track,tracktheme,mode,difficulty,'$player_difficulty','$player_location','$player_track','$player_theme_track','$player_mode','$player_skill')::NUMERIC) as estimate from servers where is_ready=1 and max_players>num_active_session+"$NETWORK_AI" and created_at>NOW()-'24 hour'::INTERVAL group by endpoint order by estimate desc limit 1) as t;"`
-
-endpoint=$regression_model_endpoint
+if [[ $APP == 'stksrv-ml' ]]
+then
+  endpoint=`psql -A -q -t -w -c "/*start-client.sh-test-model*/select endpoint from (select endpoint,max(estimate_session_length_xg(location,track,tracktheme,mode,difficulty,'$player_difficulty','$player_location','$player_track','$player_theme_track','$player_mode','$player_skill')::NUMERIC) as estimate from servers where is_ready=1 and max_players>num_active_session+"$NETWORK_AI" and created_at>NOW()-'24 hour'::INTERVAL group by endpoint order by estimate desc limit 1) as t;"`
+  endpoint=`psql -A -q -t -w -c "/*start-client.sh-test-model*/select endpoint from (select endpoint,max(ltrim(split_part(estimate_session_length_mult_clas(location,track,tracktheme,mode,difficulty,'$player_difficulty','$player_location','$player_track','$player_theme_track','$player_mode','$player_skill'),',',1),'(')::INTEGER) as estimate from servers where is_ready=1 and max_players>num_active_session+"$NETWORK_AI" and created_at>NOW()-'24 hour'::INTERVAL group by endpoint order by estimate desc limit 1) as t;"`
+fi
 
 if [ -z ${endpoint}];
 then

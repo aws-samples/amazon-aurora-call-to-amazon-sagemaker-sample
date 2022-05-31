@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -x
 #restore simulator state from SQS in the case of previous run
 DEPLOY_PREFIX="stk"
 sqs_file="/tmp/"$RANDOM".json"
@@ -23,7 +23,8 @@ prev_clients=0
 prev_servers=0
 
 #simulator sine wave range. From $j to 3.14 in 0.1 increments
-_seq=`seq $j 0.021 3.14`
+#assuming 10 min interval, 0.021 gives 150 rounds in a cycle => 3.14/0.021 x 10 min / 60 minutes=25 hours
+_seq=`seq $j 0.168 3.14`
 echo "first seq is "$_seq
 while true; do
 for i in $_seq; do
@@ -48,15 +49,15 @@ for i in $_seq; do
   deploys=`kubectl get deploy | grep $DEPLOY_PREFIX | awk '{print $1}'`
   for deploy in $deploys
   do
-   if [[ "$deploy" == "stknlb"* ]]; then
+   if [[ "$deploy" == "stksrv"* ]]; then
         kubectl scale deploy/$deploy --replicas=$servers
-        aws cloudwatch put-metric-data --metric-name current_gameservers --namespace ${DEPLOY_NAME} --value ${servers}
-        echo "gameservers="$servers" sinx="$sinx
+        aws cloudwatch put-metric-data --metric-name current_gameservers --namespace ${DEPLOY_NAME} --value ${servers} --dimensions app=$deploy
+        echo "servers="$servers" sinx="$sinx
    fi
    if [[ "$deploy" == "stkcli"* ]]; then
         kubectl scale deploy/$deploy --replicas=$clients
-        aws cloudwatch put-metric-data --metric-name current_gameclient --namespace ${DEPLOY_NAME} --value ${clients}
-        echo "gameclients="$clients" sinx="$sinx
+        aws cloudwatch put-metric-data --metric-name current_gameclient --namespace ${DEPLOY_NAME} --value ${clients} --dimensions app=$deploy
+        echo "clients="$clients" sinx="$sinx
    fi
   done
 
@@ -67,6 +68,6 @@ for i in $_seq; do
   kubectl delete po `kubectl get po | egrep 'Evicted|CrashLoopBackOff|CreateContainerError|ExitCode|OOMKilled|RunContainerError'|awk '{print $1}'`
   sleep $sleeptime"m"
 done
-_seq=`seq 0.01 0.021 3.14`
+_seq=`seq 0.01 0.168 3.14`
 echo "new cycle "$_seq
 done

@@ -34,6 +34,7 @@ do
   tail -$SIZE_OF_GAME_SAMPLE $game_stdout| grep "GameProtocol: Controller action"| awk -F\: '{print $3}' > $TEMPOUT_1
   if [ -s $TEMPOUT_1 ]; then
     #getting the playeractions, the third field in GameProtocol: Controller action.
+    is_session_started=1
     #cat $TEMPOUT_1 | awk -v pod=$POD_NAME '{print pod$2,$3}' | sort | uniq -c > $TEMPOUT_2
     cat $TEMPOUT_1 | awk -v pod=$POD_NAME '{print pod,$3}' | sort | uniq -c > $TEMPOUT_2
     TEMPOUT_3=$(mktemp)
@@ -98,8 +99,13 @@ do
 
   else
     echo "no game actions yet"
+    if [[ $is_session_started == 1 ]]
+    then
+      echo "session is over"
+      exit 
+    fi
   fi
-  avg_session_length=`psql -A -q -t -w -c "/*pub-game-actions-cw.sh*/select avg(EXTRACT(MINUTE FROM session_length)) from sessions where app='$APP' and created_at<NOW()-'1 min'::INTERVAL and session_length is not null;"|sed 's/ //g'`
+  avg_session_length=`psql -A -q -t -w -c "/*pub-game-actions-cw.sh*/select avg(EXTRACT(MINUTE FROM session_length)) from sessions where app='$APP' and created_at<NOW()-'1 min'::INTERVAL and created_at>NOW()-'12 hour'::INTERVAL and session_length is not null;"|sed 's/ //g'`
   aws cloudwatch put-metric-data --metric-name AVG_SESSION_LENGTH --namespace ${CW_NS} --value $avg_session_length --dimensions app=$APP
   sleep $SLEEP_B4_PUT_CW
 done

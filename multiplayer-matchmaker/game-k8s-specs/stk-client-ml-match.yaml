@@ -51,7 +51,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/stklean:ml
+        image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/stklean:latest
         lifecycle:
           preStop:
             exec:
