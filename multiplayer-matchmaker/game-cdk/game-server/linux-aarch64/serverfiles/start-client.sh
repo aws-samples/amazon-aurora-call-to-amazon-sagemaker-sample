@@ -7,7 +7,7 @@ player_mode=`/get-mode.py`
 echo export MODE=$player_mode >> /root/.bashrc
 
 player_skill=`/get-player-skill.py`
-echo export MODE=$player_skill >> /root/.bashrc
+echo export SKILL=$player_skill >> /root/.bashrc
 
 player_location=`/get-location.py`
 echo export SERVER_LOCATION=$player_location >> /root/.bashrc
