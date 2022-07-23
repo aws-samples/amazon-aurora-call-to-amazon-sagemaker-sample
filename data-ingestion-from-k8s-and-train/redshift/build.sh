@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
   
 account=$(aws sts get-caller-identity --output text --query Account)
 region="us-west-2"

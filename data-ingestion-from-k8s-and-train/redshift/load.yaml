@@ -21,7 +21,7 @@ spec:
         envFrom:
           - secretRef: 
               name: stk-redshift-creds
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:arm-0.9
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:arm-0.10
         imagePullPolicy: Always
         command: ["/load.sh"]
         envFrom:
