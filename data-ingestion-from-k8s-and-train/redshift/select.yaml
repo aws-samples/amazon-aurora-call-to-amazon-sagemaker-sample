@@ -27,7 +27,4 @@ spec:
         envFrom:
           - secretRef:
               name: stk-redshift-creds
-      #  env:
-      #    - name: SLEEP_TIME
-      #      value: "5"
       #terminationGracePeriodSeconds: 1

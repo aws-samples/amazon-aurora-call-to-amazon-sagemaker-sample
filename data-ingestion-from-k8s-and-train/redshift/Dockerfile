@@ -1,4 +1,5 @@
 FROM python:3.9
+#FROM public.ecr.aws/sam/build-python3.9:latest
 
 RUN apt -y --fix-missing update
 RUN apt install -y curl vim unzip jq telnet dnsutils
