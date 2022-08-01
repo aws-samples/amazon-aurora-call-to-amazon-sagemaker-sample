@@ -38,13 +38,11 @@ metadata:
 data:
   fluent-bit.conf: |
     [SERVICE]
-    Parsers_File /fluent-bit/parsers/parsers.conf
-    @INCLUDE kube.conf
-  kube.conf: |
+        Parsers_File /fluent-bit/parsers/parsers.conf
     [INPUT]
         Name              tail
         Tag               kube.*
-        Path              /var/log/containers/stk*.log
+        Path              /var/log/containers/*.log
         DB                /var/log/flb_kube.db
         Docker_Mode       On
         Mem_Buf_Limit     50MB
@@ -52,14 +50,16 @@ data:
         Refresh_Interval  10
         Parser            docker
     [FILTER]
-        Name              grep
-        Regex		  log  GameProtocol: Controller action: (\d+) (\d+) (\d+) (\d+) (\d+) (\D*\d+)
-        Match		  *
+        Name                kubernetes
+        Match               kube.*
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Merge_Log_Key       log_processed
     [OUTPUT]
-        Name firehose
+        Name kafka
         Match *
-        delivery_stream stk
-        region us-west-2
+        Brokers b-1.demo.cl8cwn.c12.kafka.us-west-2.amazonaws.com:9092,b-2.demo.cl8cwn.c12.kafka.us-west-2.amazonaws.com:9092
+        Topics      test
 ---
 apiVersion: apps/v1
 kind: DaemonSet
