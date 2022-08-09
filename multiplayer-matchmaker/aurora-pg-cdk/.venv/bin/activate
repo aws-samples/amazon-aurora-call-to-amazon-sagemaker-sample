@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/cdk/aurora-pg/.venv"
+VIRTUAL_ENV="/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/aurora-pg-cdk/.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

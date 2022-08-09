@@ -58,7 +58,7 @@ data:
     [OUTPUT]
         Name kafka
         Match *
-        Brokers b-1.demo.cl8cwn.c12.kafka.us-west-2.amazonaws.com:9092,b-2.demo.cl8cwn.c12.kafka.us-west-2.amazonaws.com:9092
+        Brokers b-2.demo4.lv5cnr.c12.kafka.us-west-2.amazonaws.com:9092,b-1.demo4.lv5cnr.c12.kafka.us-west-2.amazonaws.com:9092
         Topics      test
 ---
 apiVersion: apps/v1
@@ -79,7 +79,6 @@ spec:
       serviceAccountName: fluentbit
       containers:
       - name: aws-for-fluent-bit
-        #image: 906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:latest
         image: public.ecr.aws/aws-observability/aws-for-fluent-bit:init-latest
         volumeMounts:
         - name: varlog
@@ -90,11 +89,12 @@ spec:
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
         resources:
-          #limits:
-          #  memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 600Mi
           requests:
-            cpu: 50m
-            memory: 60Mi
+            cpu: 500m
+            memory: 600Mi
       volumes:
       - name: varlog
         hostPath:

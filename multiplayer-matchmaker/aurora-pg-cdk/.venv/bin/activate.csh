@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/cdk/aurora-pg/.venv"
+setenv VIRTUAL_ENV "/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/aurora-pg-cdk/.venv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

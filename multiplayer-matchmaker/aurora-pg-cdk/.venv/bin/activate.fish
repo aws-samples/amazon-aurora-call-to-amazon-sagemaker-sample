@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/cdk/aurora-pg/.venv"
+set -gx VIRTUAL_ENV "/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/aurora-pg-cdk/.venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

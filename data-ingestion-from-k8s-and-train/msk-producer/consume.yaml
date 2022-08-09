@@ -1,29 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appupdate
+  name: appconsume
   labels:
-    app: appupdate
+    app: appconsume
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: appupdate
+      app: appconsume
   template:
     metadata:
       labels:
-        app: appupdate
+        app: appconsume
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: default
       containers:
-      - name: appupdate
+      - name: appconsume
         envFrom:
           - secretRef: 
               name: stk-redshift-creds
-        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:arm-0.9
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/kafka-consumer:java11.aarch64
         imagePullPolicy: Always
-        command: ["/update.sh"]
+        command: ["/consume.sh"]
+        env:
+          - name: BootstrapServerString
+            value: "b-2.demo4.lv5cnr.c12.kafka.us-west-2.amazonaws.com:9092,b-1.demo4.lv5cnr.c12.kafka.us-west-2.amazonaws.com:9092"
+          - name: topic
+            value: test
         resources:
           limits:
             cpu: 500m
@@ -31,10 +36,7 @@ spec:
           requests:
             cpu: 500m
             memory: 600Mi
-        envFrom:
-          - secretRef:
-              name: stk-redshift-creds
-      #  env:
-      #    - name: SLEEP_TIME
-      #      value: "5"
+      #  envFrom:
+      #    - secretRef:
+      #        name: creds
       #terminationGracePeriodSeconds: 1

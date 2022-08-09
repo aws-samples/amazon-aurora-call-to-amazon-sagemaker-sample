@@ -1,0 +1,19 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  requirements:
+  - key: kubernetes.io/arch
+    operator: In
+    values:
+    - arm64
+  limits:
+    resources:
+      cpu: 1000k
+  provider:
+    securityGroupSelector:
+      kubernetes.io/cluster/arm-us-west-2: '*'
+    subnetSelector:
+      kubernetes.io/cluster/arm-us-west-2: '*'
+  ttlSecondsAfterEmpty: 30

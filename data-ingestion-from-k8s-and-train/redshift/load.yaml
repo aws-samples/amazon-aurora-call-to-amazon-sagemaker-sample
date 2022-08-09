@@ -27,6 +27,13 @@ spec:
         envFrom:
           - secretRef:
               name: stk-redshift-creds
+        resources:
+          limits:
+            cpu: 500m
+            memory: 600Mi
+          requests:
+            cpu: 500m
+            memory: 600Mi
       #  env:
       #    - name: SLEEP_TIME
       #      value: "5"

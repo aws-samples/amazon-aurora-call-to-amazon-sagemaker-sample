@@ -12,14 +12,14 @@ class RDSStack(Stack):
     super().__init__(app, id, **kwargs)
 
     #vpc = ec2.Vpc(self, "VPC")
-    vpc = ec2.Vpc.from_lookup(self, "VPC",vpc_id="vpc-01fbbb8115ad0bdff")
+    vpc = ec2.Vpc.from_lookup(self, "VPC",vpc_id="vpc-0bf980360a4cf0521")
 
     cluster = rds.DatabaseCluster(self, "match",
       engine=rds.DatabaseClusterEngine.aurora_postgres(version=rds.AuroraPostgresEngineVersion.VER_13_4),
       credentials=rds.Credentials.from_generated_secret("postgres"),  # Optional - will default to 'admin' username and generated password
       instance_props=rds.InstanceProps(
-        #instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE4_GRAVITON, ec2.InstanceSize.LARGE),
-        instance_type=ec2.InstanceType.of(ec2.InstanceClass.MEMORY6_GRAVITON,ec2.InstanceSize.LARGE),
+        instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE4_GRAVITON, ec2.InstanceSize.LARGE),
+        #instance_type=ec2.InstanceType.of(ec2.InstanceClass.MEMORY6_GRAVITON,ec2.InstanceSize.LARGE),
         vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
         vpc=vpc,
         publicly_accessible=True
