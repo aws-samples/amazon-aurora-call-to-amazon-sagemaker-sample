@@ -1,0 +1,72 @@
+Run started:2022-08-25 15:50:06.066647
+
+Test results:
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   Location: ./game-cdk/game-server/linux-aarch64/serverfiles/get-location.py:23:18
+   More Info: https://bandit.readthedocs.io/en/1.7.4/blacklists/blacklist_calls.html#b311-random
+22	
+23	t=str(StkLocation(random.randint(1,15)))
+24	
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   Location: ./game-cdk/game-server/linux-aarch64/serverfiles/get-mode.py:17:14
+   More Info: https://bandit.readthedocs.io/en/1.7.4/blacklists/blacklist_calls.html#b311-random
+16	
+17	m=str(StkMode(random.randint(0,8)))
+18	print(m.split(".",1)[1])
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   Location: ./game-cdk/game-server/linux-aarch64/serverfiles/get-player-skill.py:16:21
+   More Info: https://bandit.readthedocs.io/en/1.7.4/blacklists/blacklist_calls.html#b311-random
+15	
+16	m=str(StkPlayerSkill(random.randint(0,7)))
+17	print(m.split(".",1)[1])
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   Location: ./game-cdk/game-server/linux-aarch64/serverfiles/get-port.py:7:11
+   More Info: https://bandit.readthedocs.io/en/1.7.4/blacklists/blacklist_calls.html#b311-random
+6	
+7	time.sleep(random.randint(0,10))
+8	try:
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   Location: ./game-cdk/game-server/linux-aarch64/serverfiles/get-track.py:28:15
+   More Info: https://bandit.readthedocs.io/en/1.7.4/blacklists/blacklist_calls.html#b311-random
+27	
+28	t=str(StkTrack(random.randint(1,20)))
+29	
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 263
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 5
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 5
+Files skipped (1):
+	./game-cdk/game-server/linux-aarch64/serverfiles/udp-health-probe.py (syntax error while parsing AST from file)

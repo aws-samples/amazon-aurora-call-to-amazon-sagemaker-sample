@@ -1,4 +1,4 @@
-#!/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/mlops-customer-churn/cdk/aurora-pg/.venv/bin/python3.9
+#!/Users/birayaha/amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/aurora-pg-cdk/.venv/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys

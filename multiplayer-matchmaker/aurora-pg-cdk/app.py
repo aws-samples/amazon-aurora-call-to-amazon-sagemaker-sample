@@ -7,15 +7,17 @@ from aws_cdk import (
     App,RemovalPolicy,Stack,Environment
 )
 
+from cdk_nag import ( AwsSolutionsChecks, NagSuppressions )
+
+
 class RDSStack(Stack):
   def __init__(self, app: App, id: str, **kwargs) -> None:
     super().__init__(app, id, **kwargs)
 
-    #vpc = ec2.Vpc(self, "VPC")
-    vpc = ec2.Vpc.from_lookup(self, "VPC",vpc_id="vpc-0bf980360a4cf0521")
+    vpc = ec2.Vpc(self, "VPC")
 
-    cluster = rds.DatabaseCluster(self, "match",
-      engine=rds.DatabaseClusterEngine.aurora_postgres(version=rds.AuroraPostgresEngineVersion.VER_13_4),
+    cluster = rds.DatabaseCluster(self, "craft",
+      engine=rds.DatabaseClusterEngine.aurora_postgres(version=rds.AuroraPostgresEngineVersion.VER_13_6),
       credentials=rds.Credentials.from_generated_secret("postgres"),  # Optional - will default to 'admin' username and generated password
       instance_props=rds.InstanceProps(
         instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE4_GRAVITON, ec2.InstanceSize.LARGE),
