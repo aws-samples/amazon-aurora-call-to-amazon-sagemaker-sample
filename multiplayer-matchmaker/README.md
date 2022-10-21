@@ -168,4 +168,13 @@ The chief metrics we use to assess the model performance are stksrv-ml or stksrv
 
 ![Sumulation sample](./Picture1.png)
 
-10. 	To clean the enviroment built, execute `./clean.sh` to remove the application in EKS, then remove the EKS cluster and finally delete the Aurora DB cluster. 
+
+
+### Clean up
+To avoid incurring charges for the services used, please execute
+
+```bash
+./amazon-aurora-call-to-amazon-sagemaker-sample/multiplayer-matchmaker/clean.sh
+```
+
+The script will remove the application in EKS, then remove the EKS cluster and finally delete the Aurora DB cluster. 
