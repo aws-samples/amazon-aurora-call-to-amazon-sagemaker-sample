@@ -167,3 +167,5 @@ kubectl apply -f game-k8s-specs/ stk-client-ml-match.yaml
 The chief metrics we use to assess the model performance are stksrv-ml or stksrv-noml. The following example shows that matches made by the model (stksrv-ml) were 62% longer than the one made with no ML (stksrv-noml). We also provide the game client demand simulation by clients matched using the model inference (stkcli-ml) and without (stkcli-noml). Finally, we show the concurrent model invocations made by game clients. The first figure (AVG_SESSION_LENGTH ml/noml) shows the session length of matches made by the model (ml) and without the model (noml). The second figure (Game demand simu) shows the equal load between the two client types, ml and noml. The last figure (Models Invocations) shows the calls made to the model throughout the simulation. 
 
 ![Sumulation sample](./Picture1.png)
+
+10. 	To clean the enviroment built, execute `./clean.sh` to remove the application in EKS, then remove the EKS cluster and finally delete the Aurora DB cluster. 
