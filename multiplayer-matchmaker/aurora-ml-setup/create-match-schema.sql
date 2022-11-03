@@ -22,13 +22,14 @@ create index on servers (endpoint);
 
 CREATE TABLE sessions (
  id uuid DEFAULT uuid_generate_v4() NOT NULL,
- client_id char(24) NOT NULL,
+ client_id char(64) NOT NULL,
  created_at timestamp with time zone NOT NULL,
  updated_at timestamp with time zone,
  location char(16) NOT NULL,
  endpoint char(24) NOT NULL,
  track char(24) NOT NULL,
  tracktheme char(24) NOT NULL,
+ app char(24) NOT NULL,
  mode char(24) NOT NULL,
  max_players smallint NOT NULL,
  difficulty smallint NOT NULL,
