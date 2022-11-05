@@ -85,6 +85,31 @@ SELECT partman.create_parent( p_parent_table => 'public.server_sessions',
  p_start_partition => '2022-05-01',
  p_premake => 30);
 
+CREATE EXTENSION pg_cron;
+
+UPDATE partman.part_config 
+SET infinite_time_partitions = true,
+    retention = '3 years', 
+    retention_keep_table=true 
+WHERE parent_table = 'public.servers';
+SELECT cron.schedule('@hourly', $$CALL partman.run_maintenance_proc()$$);
+
+UPDATE partman.part_config 
+SET infinite_time_partitions = true,
+    retention = '3 years', 
+    retention_keep_table=true 
+WHERE parent_table = 'public.server_sessions';
+SELECT cron.schedule('@hourly', $$CALL partman.run_maintenance_proc()$$);
+
+UPDATE partman.part_config 
+SET infinite_time_partitions = true,
+    retention = '3 years', 
+    retention_keep_table=true 
+WHERE parent_table = 'public.sessions';
+SELECT cron.schedule('@hourly', $$CALL partman.run_maintenance_proc()$$);
+
+
+
 CREATE TABLE trackmap (
  id uuid DEFAULT uuid_generate_v4() NOT NULL,
  theme char(24) NOT NULL,track char(24) NOT NULL);
