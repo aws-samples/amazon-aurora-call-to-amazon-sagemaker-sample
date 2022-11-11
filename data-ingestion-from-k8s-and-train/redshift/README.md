@@ -73,7 +73,7 @@ For the CSI driver options (2) we need to
 ```bash
 aws --region secretsmanager \
   create-secret --name stk-redshift-creds-csi \
-  --secret-string '{"username":"foo", "password":"super-sekret"}'
+  --secret-string '{PGHOST=myhost,PGDATABASE=dev,PGUSER=myuser,PGPASSWORD=mypass}'
 ```
 
 * 2.2/ Create IRSA to limit the access to the secret i.e., IAM policy scoping the accessi (`secretsmanager:GetSecretValue` and `secretsmanager:DescribeSecret` to the secret and associate it with `iamserviceaccount`
