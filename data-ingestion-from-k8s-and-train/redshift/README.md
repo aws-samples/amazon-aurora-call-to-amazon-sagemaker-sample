@@ -1,8 +1,8 @@
-# Using secrets with k8s worksloads
+# Using secrets with k8s worksloads in EKS
 
 We show two primary methods for consuming secrets: 
-* [As container environment variable](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
-* [As files in a volume mounted on one or more of its containers](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod)
+* 1/[As container environment variable](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
+* 2/[As files in a volume mounted on one or more of its containers](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod)
 
 The first method does not encrypt the secret, it merely encode it and relay on the transport layer encryption to secure it. Once stored in k8s masters, EKS use KMS key to encrypt at reast. The application consumes it via environment variable. 
 
@@ -40,3 +40,19 @@ get_secret_value_response = client.get_secret_value(
 
 `+` Not limited to only k8s but supports other high-level lanaguges
 
+
+For first option (1) we need to have the secrets stored in flat file like
+
+```bash
+$cat stk-redshift-creds.secrets
+PGHOST=myhost
+PGDATABASE=dev
+PGUSER=myuser
+PGPASSWORD=mypass
+```
+
+```bash
+kubectl create secret generic "${basename%.*}" --namespace="$KUBE_NAMESPACE" --from-env-file=stk-redshift-creds.secrets
+```
+
+more in [create-secrets.sh](./create-secrets.sh)
