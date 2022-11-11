@@ -64,7 +64,15 @@ To deploy the secrets you need to reference it in the pod spec e.g.,
           - secretRef:
               name: stk-redshift-creds
 ```
-Once the [spec](./select.yaml) is deployed
+Once the [spec](./select.yaml) is deployed you can access the secrets within the pod
+
+```bash
+$kubectl exec appselect-7d697b7bc8-z6lwm -- env | grep PG
+PGPASSWORD=mypass
+PGUSER=myuser
+PGDATABASE=dev
+PGHOST=myhost
+```
 
 For the CSI driver options (2) we need to 
 
