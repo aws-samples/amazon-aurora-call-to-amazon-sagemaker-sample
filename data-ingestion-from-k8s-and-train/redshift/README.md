@@ -52,7 +52,91 @@ PGPASSWORD=mypass
 ```
 
 ```bash
-kubectl create secret generic "${basename%.*}" --namespace="$KUBE_NAMESPACE" --from-env-file=stk-redshift-creds.secrets
+kubectl create secret generic  stk-redshift-creds --namespace=default --from-env-file=stk-redshift-creds.secrets
+```
+more in [create-secrets.sh](./create-secrets.sh)
+
+To deploy the secrets you need to reference it in the pod spec e.g.,
+
+```yaml
+      - name: appselect
+        envFrom:
+          - secretRef:
+              name: stk-redshift-creds
+```
+Once the [spec](./select.yaml) is deployed
+
+For the CSI driver options (2) we need to 
+
+* 2.1/ Create the secret in AWS secret store
+
+```bash
+aws --region secretsmanager \
+  create-secret --name stk-redshift-creds-csi \
+  --secret-string '{"username":"foo", "password":"super-sekret"}'
 ```
 
-more in [create-secrets.sh](./create-secrets.sh)
+* 2.2/ Create IRSA to limit the access to the secret i.e., IAM policy scoping the accessi (`secretsmanager:GetSecretValue` and `secretsmanager:DescribeSecret` to the secret and associate it with `iamserviceaccount`
+
+```bash
+IAM_POLICY_ARN_SECRET=$(aws iam \
+	create-policy --query Policy.Arn \
+    --output text --policy-name $IAM_POLICY_NAME_SECRET \
+    --policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [ {
+        "Effect": "Allow",
+        "Action": ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
+        "Resource": ["'"$SECRET_ARN"'" ]
+    } ]
+}')
+``` 
+
+```bash
+eksctl create iamserviceaccount \
+    --name "nappselectcsi-deployment-sa" \
+    --cluster "$EKS_CLUSTERNAME" \
+    --attach-policy-arn "$IAM_POLICY_ARN_SECRET" --approve \
+    --override-existing-serviceaccounts
+```
+
+more in [stk-redshift-creds-csi-create-iamserviceaccount.sh](./stk-redshift-creds-csi-create-iamserviceaccount.sh)
+
+* 2.3/ Create SecretProviderClass to define secretsmanager as the secret porvider
+
+```yaml
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: stk-redshift-creds-csi
+spec:
+  provider: aws
+  parameters:
+    objects: |
+        - objectName: "stk-redshift-creds-csi"
+          objectType: "secretsmanager"
+```
+
+* 2.4/ Create pod and mount secrets
+
+```yaml
+       volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets"
+          readOnly: true
+      ...
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: stk-redshift-creds-csi
+```
+
+* 2.5/ Access the secret from within the pod
+
+```bash
+kubectl exec appselectcsi-75d9df79ff-xrbwc -- cat /mnt/secrets/stk-redshift-creds-csi
+{PGHOST=myhost,PGDATABASE=dev,PGUSER=myuser,PGPASSWORD=mypass}
+```
