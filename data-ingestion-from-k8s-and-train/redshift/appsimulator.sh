@@ -48,7 +48,7 @@ for i in $_seq; do
 
   updates=`echo $(( sinx * 10/4 ))`
   inserts=`echo $(( sinx * 4/3 ))`
-  selects=`echo $(( sinx / 5 ))`
+  selects=`echo $(( sinx / 5 /2 ))`
   consumes=`echo $(( sinx / 5 ))`
   queue_size=`aws sqs get-queue-attributes --queue-url ${APP_QUEUE_URL} --attribute-names ApproximateNumberOfMessages| jq '.Attributes.ApproximateNumberOfMessages'|sed 's/"//g'`
   echo "queue_size="$queue_size

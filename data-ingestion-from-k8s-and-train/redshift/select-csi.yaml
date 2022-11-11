@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appselectcsi
+  labels:
+    app: appselectcsi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appselectcsi
+  template:
+    metadata:
+      labels:
+        app: appselectcsi
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
+      serviceAccountName: appselectcsi-deployment-sa
+      containers:
+      - name: appselectcsi
+#        envFrom:
+#          - secretRef: 
+#              name: stk-redshift-creds
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets"
+          readOnly: true
+        image: 584416962002.dkr.ecr.us-west-2.amazonaws.com/rsloader:arm-0.10
+        imagePullPolicy: Always
+        command: ["/select.sh"]
+        resources:
+          limits:
+            cpu: 500m
+            memory: 600Mi
+          requests:
+            cpu: 500m
+            memory: 600Mi
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes: 
+            secretProviderClass: stk-redshift-creds-csi
