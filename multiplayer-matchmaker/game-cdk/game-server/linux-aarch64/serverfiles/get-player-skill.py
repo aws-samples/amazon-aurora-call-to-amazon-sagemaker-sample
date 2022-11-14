@@ -13,5 +13,6 @@ class StkPlayerSkill(Enum):
   somewhatcloseskill=6
   closeskill=7
 
-m=str(StkPlayerSkill(random.randint(0,7)))
+#m=str(StkPlayerSkill(random.randint(0,7)))
+m=str(StkPlayerSkill(0))
 print(m.split(".",1)[1])

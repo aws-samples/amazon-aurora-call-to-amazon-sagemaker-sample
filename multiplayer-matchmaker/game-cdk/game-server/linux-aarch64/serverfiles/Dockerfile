@@ -1,4 +1,4 @@
-FROM 259994957756.dkr.ecr.us-west-2.amazonaws.com/stkbase:latest
+FROM 441218111557.dkr.ecr.us-west-2.amazonaws.com/stkbase:yahavb
 RUN python3 -m pip install ec2-metadata
 COPY server_config.xml /stk-code/server_config.xml
 COPY start-server.sh /start-server.sh

@@ -58,6 +58,17 @@ CREATE TABLE server_sessions (
  session_length interval,
  PRIMARY KEY (id,created_at)
 ) PARTITION BY RANGE (created_at);
+
+create table player_actions(
+  id bigint DEFAULT nextval('public.player_actions_id_seq'::regclass) not null,
+  created_at timestamp with time zone NOT NULL,
+  action varchar(24),
+  value int,
+  client_id varchar(48),
+  client_ip varchar(48),
+  PRIMARY KEY (id,created_at)
+) PARTITION BY RANGE (created_at);
+
  
 CREATE SCHEMA partman;
 CREATE EXTENSION pg_partman WITH SCHEMA partman;
@@ -85,6 +96,13 @@ SELECT partman.create_parent( p_parent_table => 'public.server_sessions',
  p_start_partition => '2022-05-01',
  p_premake => 30);
 
+SELECT partman.create_parent( p_parent_table =>'public.player_actions',
+ p_control =>'created_at',
+ p_type =>'native',
+ p_interval =>'daily',
+ p_start_partition =>'2022-11-13',
+ p_premake =>6);
+
 CREATE EXTENSION pg_cron;
 
 UPDATE partman.part_config 
@@ -108,7 +126,12 @@ SET infinite_time_partitions = true,
 WHERE parent_table = 'public.sessions';
 SELECT cron.schedule('@hourly', $$CALL partman.run_maintenance_proc()$$);
 
-
+UPDATE partman.part_config 
+SET infinite_time_partitions = true,
+    retention = '3 years', 
+    retention_keep_table=true 
+WHERE parent_table = 'public.player_actions';
+SELECT cron.schedule('@hourly', $$CALL partman.run_maintenance_proc()$$);
 
 CREATE TABLE trackmap (
  id uuid DEFAULT uuid_generate_v4() NOT NULL,

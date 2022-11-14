@@ -1,5 +1,5 @@
 #!/bin/bash -x
-
+echo `date`
 game_server_dynamic_port=`/get-port.py`
 echo export UDP_SOCKET_PORT=$game_server_dynamic_port >> /root/.bashrc 
 
@@ -35,4 +35,4 @@ fi
 echo export SERVER_ID=$id >> /root/.bashrc
 
 cd /stk-code
-/cmake_build/bin/supertuxkart --server-config=/stk-code/server_config.xml --mode $MODE --port=$game_server_dynamic_port $MISC_ARGS --difficulty=$game_difficulty --max-players=$game_max_players --track=$game_track
+/cmake_build/bin/supertuxkart --server-config=/stk-code/server_config.xml --port=$game_server_dynamic_port $MISC_ARGS --difficulty=$game_difficulty --max-players=$game_max_players --track=$game_track
